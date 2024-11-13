@@ -1,8 +1,6 @@
-package com.corrinedev.gundurability;
+package com.corrinedev.gundurability.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-
-import java.util.List;
 
 public class Config {
 	public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

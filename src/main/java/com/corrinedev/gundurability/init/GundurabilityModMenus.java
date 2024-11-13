@@ -4,15 +4,13 @@
  */
 package com.corrinedev.gundurability.init;
 
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-
-import net.minecraft.world.inventory.MenuType;
-
-import com.corrinedev.gundurability.world.inventory.RepairGUIMenu;
 import com.corrinedev.gundurability.Gundurability;
+import com.corrinedev.gundurability.world.inventory.RepairGUIMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class GundurabilityModMenus {
 	public static final DeferredRegister<MenuType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Gundurability.MODID);

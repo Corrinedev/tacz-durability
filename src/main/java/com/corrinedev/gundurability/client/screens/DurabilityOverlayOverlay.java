@@ -1,23 +1,17 @@
 
 package com.corrinedev.gundurability.client.screens;
 
-import com.corrinedev.gundurability.ConfigClient;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.api.distmarker.Dist;
-
-import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.player.Player;
+import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.config.ConfigClient;
+import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.client.Minecraft;
-
-import com.corrinedev.gundurability.execution.YellowOverlayProcedure;
-import com.corrinedev.gundurability.execution.ReturnOverlayProcedure;
-import com.corrinedev.gundurability.execution.RedOverlayProcedure;
-import com.corrinedev.gundurability.execution.OrangeOverlayProcedure;
-import com.corrinedev.gundurability.execution.HoldingOverlayProcedure;
-import com.corrinedev.gundurability.execution.DurabilityOverlayDisplayOverlayIngameProcedure;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderGuiEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber({Dist.CLIENT})
 public class DurabilityOverlayOverlay {
@@ -37,23 +31,28 @@ public class DurabilityOverlayOverlay {
 				y = entity.getY();
 				z = entity.getZ();
 			}
-			if (DurabilityOverlayDisplayOverlayIngameProcedure.execute(entity)) {
-				if (HoldingOverlayProcedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
+		if (entity.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
+			int color;
 
-							ReturnOverlayProcedure.execute(entity), w - 97, h - 16, -13382656, false);
-				if (YellowOverlayProcedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
-
-							ReturnOverlayProcedure.execute(entity), w - 97, h - 16, -154, false);
-				if (OrangeOverlayProcedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
-
-							ReturnOverlayProcedure.execute(entity), w - 97, h - 16, -26317, false);
-				if (RedOverlayProcedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
-
-							ReturnOverlayProcedure.execute(entity), w - 97, h - 16, -39322, false);
+			double percent = (double) entity.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+			percent = percent * 100;
+			//Yellow
+			if(percent > 50 && percent <= 75) {
+				color = -154;
+			}
+			//Orange
+			else if (percent > 25 && percent <= 50){
+				color = -26317;
+			}
+			//Red
+			else if (percent <= 25) {
+				color = -39322;
+			}
+			//Green
+			else {
+				color = -13382656;
+			}
+			event.getGuiGraphics().drawString(Minecraft.getInstance().font, entity.getMainHandItem().getHoverName().getString(), w - 97, h - 16, color, false);
 			}
 		}
 	}

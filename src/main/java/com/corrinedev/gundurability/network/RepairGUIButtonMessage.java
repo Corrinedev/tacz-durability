@@ -1,22 +1,19 @@
 
 package com.corrinedev.gundurability.network;
 
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
-
-import com.corrinedev.gundurability.world.inventory.RepairGUIMenu;
-import com.corrinedev.gundurability.execution.ButtonRepairProcedure;
 import com.corrinedev.gundurability.Gundurability;
+import com.corrinedev.gundurability.world.inventory.RepairGUIMenu;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RepairGUIButtonMessage {
@@ -64,7 +61,7 @@ public class RepairGUIButtonMessage {
 			return;
 		if (buttonID == 0) {
 
-			ButtonRepairProcedure.execute(entity);
+			//ButtonRepairProcedure.execute(entity);
 		}
 	}
 

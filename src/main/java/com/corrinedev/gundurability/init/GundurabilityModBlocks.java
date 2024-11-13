@@ -4,14 +4,12 @@
  */
 package com.corrinedev.gundurability.init;
 
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.DeferredRegister;
-
-import net.minecraft.world.level.block.Block;
-
-import com.corrinedev.gundurability.block.RepairTableBlock;
 import com.corrinedev.gundurability.Gundurability;
+import com.corrinedev.gundurability.block.RepairTableBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class GundurabilityModBlocks {
 	public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Gundurability.MODID);

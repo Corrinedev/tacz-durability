@@ -1,14 +1,13 @@
 package com.corrinedev.gundurability.init;
 
-import com.corrinedev.gundurability.ConfigClient;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import com.corrinedev.gundurability.Config;
 import com.corrinedev.gundurability.Gundurability;
+import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.config.ConfigClient;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
 @Mod.EventBusSubscriber(modid = Gundurability.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GundurabilityModConfigs {

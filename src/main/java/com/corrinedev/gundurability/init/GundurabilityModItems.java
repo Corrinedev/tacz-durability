@@ -4,20 +4,14 @@
  */
 package com.corrinedev.gundurability.init;
 
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.DeferredRegister;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.BlockItem;
-
-import com.corrinedev.gundurability.item.WD40Item;
-import com.corrinedev.gundurability.item.RecoilSpringItem;
-import com.corrinedev.gundurability.item.GunBoltItem;
-import com.corrinedev.gundurability.item.GunBarrelItem;
-import com.corrinedev.gundurability.item.BrassBrushItem;
 import com.corrinedev.gundurability.Gundurability;
+import com.corrinedev.gundurability.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class GundurabilityModItems {
 	public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, Gundurability.MODID);

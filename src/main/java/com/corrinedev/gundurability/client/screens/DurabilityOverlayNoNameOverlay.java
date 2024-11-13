@@ -1,23 +1,15 @@
 
 package com.corrinedev.gundurability.client.screens;
 
-import com.corrinedev.gundurability.ConfigClient;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.api.distmarker.Dist;
-
-import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.player.Player;
+import com.corrinedev.gundurability.config.ConfigClient;
 import net.minecraft.client.Minecraft;
-
-import com.corrinedev.gundurability.execution.YellowOverlay2Procedure;
-import com.corrinedev.gundurability.execution.ReturnOverlayNoNameProcedure;
-import com.corrinedev.gundurability.execution.RedOverlay2Procedure;
-import com.corrinedev.gundurability.execution.OrangeOverlay2Procedure;
-import com.corrinedev.gundurability.execution.GreenOverlay2Procedure;
-import com.corrinedev.gundurability.execution.DurabilityNoNameDisplayProcedure;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderGuiEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber({Dist.CLIENT})
 public class DurabilityOverlayNoNameOverlay {
@@ -37,24 +29,24 @@ public class DurabilityOverlayNoNameOverlay {
 				y = entity.getY();
 				z = entity.getZ();
 			}
-			if (DurabilityNoNameDisplayProcedure.execute(entity)) {
-				if (GreenOverlay2Procedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
+		//if (DurabilityNoNameDisplayProcedure.execute(entity)) {
+		//	if (GreenOverlay2Procedure.execute(entity))
+		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 
-							ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -13382656, false);
-				if (YellowOverlay2Procedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
+		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -13382656, false);
+		//	if (YellowOverlay2Procedure.execute(entity))
+		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 
-							ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -154, false);
-				if (OrangeOverlay2Procedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
+		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -154, false);
+		//	if (OrangeOverlay2Procedure.execute(entity))
+		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 
-							ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -26317, false);
-				if (RedOverlay2Procedure.execute(entity))
-					event.getGuiGraphics().drawString(Minecraft.getInstance().font,
+		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -26317, false);
+		//	if (RedOverlay2Procedure.execute(entity))
+		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 
-							ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -39322, false);
-			}
+		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -39322, false);
+		//}
 		}
 	}
 }

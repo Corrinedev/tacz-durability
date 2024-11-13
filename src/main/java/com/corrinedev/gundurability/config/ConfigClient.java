@@ -1,4 +1,4 @@
-package com.corrinedev.gundurability;
+package com.corrinedev.gundurability.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 

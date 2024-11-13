@@ -1,22 +1,17 @@
 
 package com.corrinedev.gundurability.command;
 
-import com.corrinedev.gundurability.Config;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.common.util.FakePlayerFactory;
-
-import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.core.Direction;
-import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.Commands;
-
-import com.corrinedev.gundurability.execution.DurabilitySetProcedure;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class RestoreDurabilityCommand {
@@ -35,8 +30,7 @@ public class RestoreDurabilityCommand {
 					if (entity != null)
 						direction = entity.getDirection();
 
-					DurabilitySetProcedure.execute(arguments);
-					System.out.println(Config.JAMCHANCE.get());
+					EntityArgument.getPlayer(arguments, "player").getMainHandItem().getOrCreateTag().putInt("Durability", (IntegerArgumentType.getInteger(arguments, "durability")));
 					return 0;
 				}))));
 	}
