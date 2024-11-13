@@ -1,0 +1,11 @@
+{
+  "jamsfx": {
+    "subtitle": "subtitles.jamsfx",
+    "sounds": [
+      {
+        "name": "gundurability:dry_fire",
+        "stream": false
+      }
+    ]
+  }
+}

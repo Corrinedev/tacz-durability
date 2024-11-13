@@ -1,0 +1,9 @@
+{
+  "parent": "gundurability:custom/repairbenchjava",
+  "textures": {
+    "all": "gundurability:block/tabletexturenogecko",
+    "particle": "gundurability:block/tabletexturenogecko",
+    "2": "gundurability:block/tabletexturenogecko"
+  },
+  "render_type": "cutout"
+}
