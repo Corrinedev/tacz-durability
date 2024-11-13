@@ -1,7 +1,9 @@
 
-package com.corrinedev.gundurability.client.screens;
+package com.corrinedev.gundurability.client.overlays;
 
+import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.ConfigClient;
+import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -12,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber({Dist.CLIENT})
-public class DurabilityOverlayNoNameOverlay {
+public class DurabilityOverlayOverlay {
 	@SubscribeEvent(priority = EventPriority.NORMAL)
 	public static void eventHandler(RenderGuiEvent.Pre event) {
 		if(ConfigClient.SHOWGUI.get()) {
@@ -29,24 +31,29 @@ public class DurabilityOverlayNoNameOverlay {
 				y = entity.getY();
 				z = entity.getZ();
 			}
-		//if (DurabilityNoNameDisplayProcedure.execute(entity)) {
-		//	if (GreenOverlay2Procedure.execute(entity))
-		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
+		if (entity.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
+			int color;
 
-		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -13382656, false);
-		//	if (YellowOverlay2Procedure.execute(entity))
-		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
-
-		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -154, false);
-		//	if (OrangeOverlay2Procedure.execute(entity))
-		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
-
-		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -26317, false);
-		//	if (RedOverlay2Procedure.execute(entity))
-		//		event.getGuiGraphics().drawString(Minecraft.getInstance().font,
-
-		//				ReturnOverlayNoNameProcedure.execute(entity), w - 97, h - 16, -39322, false);
-		//}
+			double percent = (double) entity.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+			percent = percent * 100;
+			//Yellow
+			if(percent > 50 && percent <= 75) {
+				color = -154;
+			}
+			//Orange
+			else if (percent > 25 && percent <= 50){
+				color = -26317;
+			}
+			//Red
+			else if (percent <= 25) {
+				color = -39322;
+			}
+			//Green
+			else {
+				color = -13382656;
+			}
+			event.getGuiGraphics().drawString(Minecraft.getInstance().font, entity.getMainHandItem().getHoverName().getString(), w - 97, h - 16, color, false);
+			}
 		}
 	}
 }

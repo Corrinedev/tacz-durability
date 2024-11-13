@@ -19,7 +19,7 @@ public class RestoreDurabilityCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
 		event.getDispatcher().register(
-				Commands.literal("setdurability").requires(s -> s.hasPermission(4)).then(Commands.argument("player", EntityArgument.player()).then(Commands.argument("durability", IntegerArgumentType.integer(0, Config.MAXDURABILITY.get())).executes(arguments -> {
+				Commands.literal("setdurability").requires(s -> s.hasPermission(4)).then(Commands.argument("player", EntityArgument.player()).then(Commands.argument("durability", IntegerArgumentType.integer(0, Integer.MAX_VALUE)).executes(arguments -> {
 					Level world = arguments.getSource().getUnsidedLevel();
 					double x = arguments.getSource().getPosition().x();
 					double y = arguments.getSource().getPosition().y();

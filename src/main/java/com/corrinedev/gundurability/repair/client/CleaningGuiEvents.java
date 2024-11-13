@@ -1,6 +1,7 @@
 package com.corrinedev.gundurability.repair.client;
 
 import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.repair.ReparKitItem;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
@@ -34,6 +35,11 @@ public class CleaningGuiEvents {
     @SubscribeEvent
     public static void renderItemInGUI(RenderGuiEvent.Pre event) {
         if(Minecraft.getInstance().screen instanceof CleaningGui gui) {
+            Player player = Minecraft.getInstance().player;
+
+            assert player != null;
+            ItemStack RepairStack = player.getSlot(gui.repairStackSlot).get();
+            ReparKitItem repair = (ReparKitItem) RepairStack.getItem();
             int w = event.getGuiGraphics().guiWidth();
             int h = event.getGuiGraphics().guiHeight();
             x1 = event.getGuiGraphics().guiWidth() / 2 - 120;
@@ -42,11 +48,12 @@ public class CleaningGuiEvents {
             y2 = event.getGuiGraphics().guiHeight() / 2 + 50;
 
            // renderItem(w / 2, h / 2, event.getGuiGraphics(), 250F, gui.gunStack);
-            renderGun(80, w/2,h/2, gui.gunStack, 0.25f);
+            float offset = (float) Math.abs(repair.max - 100) / 100;
+            renderGun(80, w/2,h/2, gui.gunStack, offset);
             double percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
             percent = percent * 100;
 
-            if(!(percent > 50 && percent <= 75)) {
+            if(!(percent > repair.min && percent <= repair.max)) {
                 event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, "You can't repair this item further!", w / 2, h / 2 - 50, -1);
             }
         }

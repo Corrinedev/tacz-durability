@@ -5,7 +5,8 @@ import com.corrinedev.gundurability.repair.client.CleaningGui;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -16,9 +17,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ReparKitItem extends Item {
-    public static ItemStack currentitem;
-    public ReparKitItem() {
-        super(new Properties().durability(500));
+    public int durability;
+    public ResourceLocation resourcelocation;
+    public int min;
+    public int max;
+    public SoundEvent sound;
+    public ReparKitItem(Properties properties, int durability, ResourceLocation image, int min, int max, SoundEvent sound) {
+        super(properties);
+        this.durability = durability;
+        this.resourcelocation = image;
+        this.min = min;
+        this.max = max;
+        this.sound = sound;
     }
 
     @Override
@@ -36,7 +46,7 @@ public class ReparKitItem extends Item {
                 double percent = (double) pSlot.getItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
                 percent = percent * 100;
 
-                if(percent > 50 && percent <= 75) {
+                if(percent > min && percent <= max) {
 
                 allow = true;
 
@@ -46,18 +56,17 @@ public class ReparKitItem extends Item {
                 pPlayer.addItem(newstack);
                 int slot = 1;
                     for (int i = 0; i < 36; i++) {
-                        if(pPlayer.getSlot(i).get() == newstack) {
+                        if(pPlayer.getSlot(i).get().getItem() == this) {
                             slot = i;
                             break;
                         }
                     }
-                    Minecraft.getInstance().setScreen(new CleaningGui(pSlot.getItem(), newstack, slot));
-                    System.out.println(newstack);
+                    Minecraft.getInstance().setScreen(new CleaningGui(pSlot.getItem(), newstack, slot, resourcelocation));
                 pStack.setCount(0);
 
 
             } else {
-                    Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between 1000 and 1800 durability!"), true);
+                    Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between 75% and 90% durability!"), true);
                 }
         }
         return allow;

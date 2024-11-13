@@ -19,6 +19,11 @@ public class RepairEvents {
     public static void cleaningGuiRag(TickEvent.PlayerTickEvent event) {
         Player player = Minecraft.getInstance().player;
         if (Minecraft.getInstance().screen instanceof CleaningGui gui) {
+
+            assert player != null;
+            ItemStack RepairStack = player.getSlot(gui.repairStackSlot).get();
+            ReparKitItem repair = (ReparKitItem) RepairStack.getItem();
+
             if (tick != 40) {
                 tick++;
             } else {
@@ -27,15 +32,13 @@ public class RepairEvents {
                     percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
                     percent = percent * 100;
                     //Yellow
-                    if(percent > 50 && percent <= 75) {
-                        assert player != null;
-                        player.playSound(SoundEvents.WOOL_HIT);
-                        gui.gunStack.getOrCreateTag().putInt("Durability", gui.gunStack.getOrCreateTag().getInt("Durability") + 10);
+                    if(percent > repair.min && percent <= repair.max) {
+                        player.playSound(repair.sound);
+
 
                         //System.out.println(gui.repairStack);\
-                        ItemStack RepairStack = player.getSlot(gui.repairStackSlot).get();
-                        System.out.println(RepairStack);
-                        System.out.println(gui.repairStackSlot);
+
+                        gui.gunStack.getOrCreateTag().putInt("Durability", gui.gunStack.getOrCreateTag().getInt("Durability") + repair.durability);
                         if(RepairStack.getDamageValue() != RepairStack.getMaxDamage()) {
                             RepairStack.setDamageValue(RepairStack.getDamageValue() + 1);
                         } else {

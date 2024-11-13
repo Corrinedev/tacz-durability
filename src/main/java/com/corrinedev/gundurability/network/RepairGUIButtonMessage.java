@@ -2,10 +2,16 @@
 package com.corrinedev.gundurability.network;
 
 import com.corrinedev.gundurability.Gundurability;
+import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.init.GundurabilityModItems;
 import com.corrinedev.gundurability.world.inventory.RepairGUIMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,6 +19,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -61,12 +68,54 @@ public class RepairGUIButtonMessage {
 			return;
 		if (buttonID == 0) {
 
-			//ButtonRepairProcedure.execute(entity);
+			execute(entity);
 		}
 	}
 
 	@SubscribeEvent
 	public static void registerMessage(FMLCommonSetupEvent event) {
 		Gundurability.addNetworkMessage(RepairGUIButtonMessage.class, RepairGUIButtonMessage::buffer, RepairGUIButtonMessage::new, RepairGUIButtonMessage::handler);
+	}
+
+	public static void execute(Entity entity) {
+		double percent = (double) Config.MAXDURABILITY.get() / 100;
+
+
+		if (entity == null)
+			return;
+		if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability") < Config.MAXDURABILITY.get()) {
+			if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(2)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.GUN_BARREL
+					.get()) {
+				if (entity instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
+					((Slot) _slots.get(2)).remove(1);
+					_player.containerMenu.broadcastChanges();
+				}
+				(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
+                        (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
+                                                        + percent * 15));
+			}
+			if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(3)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.GUN_BOLT.get()) {
+				if (entity instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
+					((Slot) _slots.get(3)).remove(1);
+					_player.containerMenu.broadcastChanges();
+				}
+				(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
+                        (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
+                                                        + percent * 17.5f));
+			}
+			if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(4)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.RECOIL_SPRING
+					.get()) {
+				if (entity instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
+					((Slot) _slots.get(4)).remove(1);
+					_player.containerMenu.broadcastChanges();
+				}
+				(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
+                        (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
+                                                        + percent * 12.5));
+			}
+			if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability") > Config.MAXDURABILITY.get()) {
+				(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability", Config.MAXDURABILITY.get());
+			}
+		}
 	}
 }

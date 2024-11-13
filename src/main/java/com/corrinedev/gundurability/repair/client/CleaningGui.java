@@ -36,12 +36,13 @@ public class CleaningGui extends Screen {
     public int repairStackSlot;
     public boolean cleaning = false;
 
-    public ResourceLocation RAG = new ResourceLocation("gundurability", "textures/item/brushmc.png");
+    public ResourceLocation RAG;
     //public ImageWidget ragWidget = new ImageWidget(cleaningragX, cleaningragY, 32, 32, RAG);
 
 
-    public CleaningGui(ItemStack stack, ItemStack repairStack, int repairStackSlot) {
+    public CleaningGui(ItemStack stack, ItemStack repairStack, int repairStackSlot, ResourceLocation image) {
         super(Component.literal("Weapon Repair"));
+        this.RAG = image;
         this.minecraft = Minecraft.getInstance();
         this.gunStack = stack;
         this.repairStackSlot = repairStackSlot;
