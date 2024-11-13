@@ -1,16 +1,23 @@
 package com.corrinedev.gundurability.repair.client;
 
+import com.corrinedev.gundurability.config.Config;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.tacz.guns.util.RenderDistance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,7 +33,6 @@ public class CleaningGuiEvents {
 
     @SubscribeEvent
     public static void renderItemInGUI(RenderGuiEvent.Pre event) {
-        Player player = Minecraft.getInstance().player;
         if(Minecraft.getInstance().screen instanceof CleaningGui gui) {
             int w = event.getGuiGraphics().guiWidth();
             int h = event.getGuiGraphics().guiHeight();
@@ -35,8 +41,12 @@ public class CleaningGuiEvents {
             y1 = event.getGuiGraphics().guiHeight() / 2 - 50;
             y2 = event.getGuiGraphics().guiHeight() / 2 + 50;
 
-            renderItem(w / 2, h / 2, event.getGuiGraphics(), 250F, gui.gunStack);
-            if(gui.gunStack.getOrCreateTag().getInt("Durability") >= 1800) {
+           // renderItem(w / 2, h / 2, event.getGuiGraphics(), 250F, gui.gunStack);
+            renderGun(80, w/2,h/2, gui.gunStack, 0.25f);
+            double percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+            percent = percent * 100;
+
+            if(!(percent > 50 && percent <= 75)) {
                 event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, "You can't repair this item further!", w / 2, h / 2 - 50, -1);
             }
         }
@@ -65,5 +75,40 @@ public class CleaningGuiEvents {
         modelStack.popPose();
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();
+    }
+    public static void renderGun(float scale, int leftPos, int topPos, ItemStack itemStack, float percentoffset) {
+        float percent = (float) itemStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+        RenderDistance.markGuiRenderTimestamp();
+        float rotationPeriod = 8.0F;
+        int xPos = leftPos;
+        int yPos = topPos;
+        float rotPitch = 15.0F;
+        Window window = Minecraft.getInstance().getWindow();
+      //  RenderSystem.enableScissor(scissorX, scissorY, scissorW, scissorH);
+        Minecraft.getInstance().textureManager.getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderColor(1.0F, percent + percentoffset, percent + percentoffset, 1.0F);
+        PoseStack posestack = RenderSystem.getModelViewStack();
+        posestack.pushPose();
+        posestack.translate((float)xPos, (float)yPos, 200.0F);
+        posestack.translate(8.0, 8.0, 0.0);
+        posestack.scale(1.0F, -1.0F, 1.0F);
+        posestack.scale((float)scale, (float)scale, (float)scale);
+        float rot = (float)(System.currentTimeMillis() % (long)((int)(rotationPeriod * 1000.0F))) * (360.0F / (rotationPeriod * 1000.0F));
+        posestack.mulPose(Axis.XP.rotationDegrees(rotPitch));
+       // posestack.mulPose(Axis.YP.rotationDegrees(rot));
+        RenderSystem.applyModelViewMatrix();
+        PoseStack tmpPose = new PoseStack();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        Lighting.setupForFlatItems();
+        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemDisplayContext.FIXED, 15728880, OverlayTexture.NO_OVERLAY, tmpPose, bufferSource, (Level)null, 0);
+        bufferSource.endBatch();
+        RenderSystem.enableDepthTest();
+        Lighting.setupFor3DItems();
+        posestack.popPose();
+        RenderSystem.applyModelViewMatrix();
+     //   RenderSystem.disableScissor();
     }
 }

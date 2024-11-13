@@ -5,6 +5,7 @@ import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.init.GundurabilityModGameRules;
 import com.corrinedev.gundurability.init.GundurabilityModSounds;
 import com.tacz.guns.api.event.common.GunFireEvent;
+import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -15,11 +16,19 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class TaczEvents {
+    @SubscribeEvent
+    public static void tooltip(ItemTooltipEvent event) {
+        if(event.getItemStack().getItem() instanceof ModernKineticGunItem) {
+            event.getToolTip().add(MutableComponent.create(Component.literal("Durability: " + String.valueOf(event.getItemStack().getOrCreateTag().getInt("Durability"))).getContents()).withStyle(ChatFormatting.GRAY));
+        }
+    }
+
     @SubscribeEvent
     public static void onShootEvent(GunFireEvent event) {
  

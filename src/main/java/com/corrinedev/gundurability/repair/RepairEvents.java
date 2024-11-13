@@ -13,27 +13,34 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class RepairEvents {
     public static int tick = 0;
-    public static ItemStack currentitem;
     public static double percent;
 
     @SubscribeEvent
     public static void cleaningGuiRag(TickEvent.PlayerTickEvent event) {
         Player player = Minecraft.getInstance().player;
         if (Minecraft.getInstance().screen instanceof CleaningGui gui) {
-            if (tick != 20) {
+            if (tick != 40) {
                 tick++;
             } else {
                 tick = 0;
                 if (gui.cleaning) {
-                    percent = (double) event.player.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+                    percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
                     percent = percent * 100;
                     //Yellow
                     if(percent > 50 && percent <= 75) {
+                        assert player != null;
                         player.playSound(SoundEvents.WOOL_HIT);
-                        //if(event.side.isClient()) {
-                        //    Network.sendToServer(new C2SCleaningPacket(20, gui.gunStack));
-                        //}
-                        gui.gunStack.getOrCreateTag().putInt("Durability", gui.gunStack.getOrCreateTag().getInt("Durability") + 5);
+                        gui.gunStack.getOrCreateTag().putInt("Durability", gui.gunStack.getOrCreateTag().getInt("Durability") + 10);
+
+                        //System.out.println(gui.repairStack);\
+                        ItemStack RepairStack = player.getSlot(gui.repairStackSlot).get();
+                        System.out.println(RepairStack);
+                        System.out.println(gui.repairStackSlot);
+                        if(RepairStack.getDamageValue() != RepairStack.getMaxDamage()) {
+                            RepairStack.setDamageValue(RepairStack.getDamageValue() + 1);
+                        } else {
+                          RepairStack.setCount(0);
+                        }
                     }
                 }
             }

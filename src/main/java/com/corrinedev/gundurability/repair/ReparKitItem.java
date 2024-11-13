@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 public class ReparKitItem extends Item {
     public static ItemStack currentitem;
     public ReparKitItem() {
-        super(new Properties().durability(10));
+        super(new Properties().durability(500));
     }
 
     @Override
@@ -33,22 +33,29 @@ public class ReparKitItem extends Item {
 
             if (pSlot.getItem().getItem() instanceof ModernKineticGunItem) {
 
-                double percent = (double) pPlayer.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+                double percent = (double) pSlot.getItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
                 percent = percent * 100;
 
                 if(percent > 50 && percent <= 75) {
 
                 allow = true;
-                Minecraft.getInstance().setScreen(new CleaningGui(pSlot.getItem(), pSlot));
+
                 ItemStack newstack = pStack.copy();
-                currentitem = pSlot.getItem();
-                if(newstack.getDamageValue() != newstack.getMaxDamage()) {
-                    newstack.setDamageValue(newstack.getDamageValue() + 1);
-                    pPlayer.addItem(newstack);
-                } else {
-                    pPlayer.playSound(SoundEvents.ITEM_BREAK);
-                }
+
+                    //currentitem = pPlayer.getInventory().getItem(pPlayer.getInventory().findSlotMatchingItem(newstack));
+                pPlayer.addItem(newstack);
+                int slot = 1;
+                    for (int i = 0; i < 36; i++) {
+                        if(pPlayer.getSlot(i).get() == newstack) {
+                            slot = i;
+                            break;
+                        }
+                    }
+                    Minecraft.getInstance().setScreen(new CleaningGui(pSlot.getItem(), newstack, slot));
+                    System.out.println(newstack);
                 pStack.setCount(0);
+
+
             } else {
                     Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between 1000 and 1800 durability!"), true);
                 }

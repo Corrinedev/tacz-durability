@@ -1,20 +1,26 @@
 package com.corrinedev.gundurability.repair.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.tacz.guns.util.RenderDistance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.joml.Matrix4f;
 
 public class CleaningGui extends Screen {
@@ -26,18 +32,20 @@ public class CleaningGui extends Screen {
     public int cleaningragYHitbox = 0;
     public int cleaningragYHitbox2 = 0;
     public ItemStack gunStack;
-    public Slot gunStackSlot;
+    public ItemStack repairStack;
+    public int repairStackSlot;
     public boolean cleaning = false;
 
     public ResourceLocation RAG = new ResourceLocation("gundurability", "textures/item/brushmc.png");
     //public ImageWidget ragWidget = new ImageWidget(cleaningragX, cleaningragY, 32, 32, RAG);
 
 
-    public CleaningGui(ItemStack stack, Slot itemSlot) {
+    public CleaningGui(ItemStack stack, ItemStack repairStack, int repairStackSlot) {
         super(Component.literal("Weapon Repair"));
         this.minecraft = Minecraft.getInstance();
         this.gunStack = stack;
-        this.gunStackSlot = itemSlot;
+        this.repairStackSlot = repairStackSlot;
+        this.repairStack = repairStack;
         super.minecraft = Minecraft.getInstance();
 
     }
@@ -55,6 +63,7 @@ public class CleaningGui extends Screen {
         if (!isDragging()) {
             cleaning = false;
         }
+
         //  renderItem(gui.guiWidth() / 2, gui.guiHeight() / 2, gui, 175, this.gunStack);
        // gui.fill(CleaningGuiEvents.x1, CleaningGuiEvents.y1, CleaningGuiEvents.x2, CleaningGuiEvents.y2, -1);
 
@@ -62,6 +71,12 @@ public class CleaningGui extends Screen {
        // gui.renderItem(new ItemStack(Items.SPONGE), cleaningragX, cleaningragY);
 
 
+    }
+
+    @Override
+    public void afterMouseMove() {
+        //cleasuper.afterMouseMove();ning = false;
+        super.afterMouseMove();
     }
 
     @Override
@@ -106,6 +121,49 @@ public class CleaningGui extends Screen {
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();
         return poseStack;
+    }
+    public static void renderGun(float scale, int leftPos, int topPos, ItemStack itemStack) {
+        RenderDistance.markGuiRenderTimestamp();
+        float rotationPeriod = 8.0F;
+        int xPos = leftPos;
+        int yPos = topPos;
+        int startX = leftPos + 3;
+        int startY = topPos + 16;
+        int width = 128;
+        int height = 99;
+        float rotPitch = 15.0F;
+        Window window = Minecraft.getInstance().getWindow();
+        double windowGuiScale = window.getGuiScale();
+        int scissorX = (int)((double)startX * windowGuiScale);
+        int scissorY = (int)((double)window.getHeight() - (double)(startY + height) * windowGuiScale);
+        int scissorW = (int)((double)width * windowGuiScale);
+        int scissorH = (int)((double)height * windowGuiScale);
+        RenderSystem.enableScissor(scissorX, scissorY, scissorW, scissorH);
+        Minecraft.getInstance().textureManager.getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        PoseStack posestack = RenderSystem.getModelViewStack();
+        posestack.pushPose();
+        posestack.translate((float)xPos, (float)yPos, 200.0F);
+        posestack.translate(8.0, 8.0, 0.0);
+        posestack.scale(1.0F, -1.0F, 1.0F);
+        posestack.scale((float)scale, (float)scale, (float)scale);
+        float rot = (float)(System.currentTimeMillis() % (long)((int)(rotationPeriod * 1000.0F))) * (360.0F / (rotationPeriod * 1000.0F));
+        posestack.mulPose(Axis.XP.rotationDegrees(rotPitch));
+        posestack.mulPose(Axis.YP.rotationDegrees(rot));
+        RenderSystem.applyModelViewMatrix();
+        PoseStack tmpPose = new PoseStack();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        Lighting.setupForFlatItems();
+        Minecraft.getInstance().getItemRenderer().renderStatic(itemStack, ItemDisplayContext.FIXED, 15728880, OverlayTexture.NO_OVERLAY, tmpPose, bufferSource, (Level)null, 0);
+        bufferSource.endBatch();
+        RenderSystem.enableDepthTest();
+        Lighting.setupFor3DItems();
+        posestack.popPose();
+        RenderSystem.applyModelViewMatrix();
+        RenderSystem.disableScissor();
     }
 
     @Override
