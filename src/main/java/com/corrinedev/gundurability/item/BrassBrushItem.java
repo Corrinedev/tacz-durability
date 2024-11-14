@@ -15,7 +15,7 @@ import java.util.List;
 
 public class BrassBrushItem extends ReparKitItem {
 	public BrassBrushItem() {
-		super(new Properties().durability(50).rarity(Rarity.COMMON), 10, new ResourceLocation("gundurability", "textures/item/brushmc.png"), 75, 90, SoundEvents.WOOL_STEP);
+		super(new Properties().durability(50).rarity(Rarity.COMMON), 0.2f, new ResourceLocation("gundurability", "textures/item/brushmc.png"), 75, 90, SoundEvents.WOOL_STEP);
 	}
 
 

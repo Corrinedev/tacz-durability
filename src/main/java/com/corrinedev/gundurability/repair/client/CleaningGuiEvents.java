@@ -39,22 +39,24 @@ public class CleaningGuiEvents {
 
             assert player != null;
             ItemStack RepairStack = player.getSlot(gui.repairStackSlot).get();
-            ReparKitItem repair = (ReparKitItem) RepairStack.getItem();
-            int w = event.getGuiGraphics().guiWidth();
-            int h = event.getGuiGraphics().guiHeight();
-            x1 = event.getGuiGraphics().guiWidth() / 2 - 120;
-            x2 = event.getGuiGraphics().guiWidth() / 2 + 120;
-            y1 = event.getGuiGraphics().guiHeight() / 2 - 50;
-            y2 = event.getGuiGraphics().guiHeight() / 2 + 50;
+            if (player.getSlot(gui.repairStackSlot).get().getItem() instanceof ReparKitItem) {
+                ReparKitItem repair = (ReparKitItem) RepairStack.getItem();
+                int w = event.getGuiGraphics().guiWidth();
+                int h = event.getGuiGraphics().guiHeight();
+                x1 = event.getGuiGraphics().guiWidth() / 2 - 120;
+                x2 = event.getGuiGraphics().guiWidth() / 2 + 120;
+                y1 = event.getGuiGraphics().guiHeight() / 2 - 50;
+                y2 = event.getGuiGraphics().guiHeight() / 2 + 50;
 
-           // renderItem(w / 2, h / 2, event.getGuiGraphics(), 250F, gui.gunStack);
-            float offset = (float) Math.abs(repair.max - 100) / 100;
-            renderGun(80, w/2,h/2, gui.gunStack, offset);
-            double percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
-            percent = percent * 100;
+                // renderItem(w / 2, h / 2, event.getGuiGraphics(), 250F, gui.gunStack);
+                float offset = (float) Math.abs(repair.max - 100) / 100;
+                renderGun(80, w / 2, h / 2, gui.gunStack, offset);
+                double percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+                percent = percent * 100;
 
-            if(!(percent > repair.min && percent <= repair.max)) {
-                event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, "You can't repair this item further!", w / 2, h / 2 - 50, -1);
+                if (!(percent > repair.min && percent <= repair.max)) {
+                    event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, "You can't repair this item further!", w / 2, h / 2 - 50, -1);
+                }
             }
         }
     }

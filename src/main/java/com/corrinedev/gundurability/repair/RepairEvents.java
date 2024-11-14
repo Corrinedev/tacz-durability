@@ -22,27 +22,31 @@ public class RepairEvents {
 
             assert player != null;
             ItemStack RepairStack = player.getSlot(gui.repairStackSlot).get();
-            ReparKitItem repair = (ReparKitItem) RepairStack.getItem();
+            if(player.getSlot(gui.repairStackSlot).get().getItem() instanceof ReparKitItem) {
+                ReparKitItem repair = (ReparKitItem) RepairStack.getItem();
 
-            if (tick != 40) {
-                tick++;
-            } else {
-                tick = 0;
-                if (gui.cleaning) {
-                    percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
-                    percent = percent * 100;
-                    //Yellow
-                    if(percent > repair.min && percent <= repair.max) {
-                        player.playSound(repair.sound);
+                if (tick != 40) {
+                    tick++;
+                } else {
+                    tick = 0;
+                    if (gui.cleaning) {
+                        percent = (double) gui.gunStack.getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+                        percent = percent * 100;
+                        //Yellow
+                        if (percent > repair.min && percent <= repair.max) {
+                            player.playSound(repair.sound);
+                            float repairpercent = (float) Config.MAXDURABILITY.get() / 100;
 
+                            repairpercent = repair.durability * repairpercent;
 
-                        //System.out.println(gui.repairStack);\
+                            //System.out.println(gui.repairStack);\
 
-                        gui.gunStack.getOrCreateTag().putInt("Durability", gui.gunStack.getOrCreateTag().getInt("Durability") + repair.durability);
-                        if(RepairStack.getDamageValue() != RepairStack.getMaxDamage()) {
-                            RepairStack.setDamageValue(RepairStack.getDamageValue() + 1);
-                        } else {
-                          RepairStack.setCount(0);
+                            gui.gunStack.getOrCreateTag().putInt("Durability", (int) (gui.gunStack.getOrCreateTag().getInt("Durability") + repairpercent));
+                            if (RepairStack.getDamageValue() != RepairStack.getMaxDamage()) {
+                                RepairStack.setDamageValue(RepairStack.getDamageValue() + 1);
+                            } else {
+                                RepairStack.setCount(0);
+                            }
                         }
                     }
                 }

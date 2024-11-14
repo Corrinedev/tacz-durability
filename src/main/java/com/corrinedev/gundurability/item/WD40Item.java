@@ -15,7 +15,7 @@ import java.util.List;
 
 public class WD40Item extends ReparKitItem {
 	public WD40Item() {
-		super(new Properties().durability(20).rarity(Rarity.COMMON), 30, new ResourceLocation("gundurability", "textures/item/wd40.png"), 60, 80, SoundEvents.GENERIC_SPLASH);
+		super(new Properties().durability(20).rarity(Rarity.COMMON), 0.4f, new ResourceLocation("gundurability", "textures/item/wd40.png"), 60, 80, SoundEvents.GENERIC_SPLASH);
 	}
 
 

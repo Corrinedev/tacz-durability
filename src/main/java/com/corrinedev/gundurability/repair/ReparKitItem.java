@@ -3,8 +3,10 @@ package com.corrinedev.gundurability.repair;
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.repair.client.CleaningGui;
 import com.tacz.guns.item.ModernKineticGunItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -14,15 +16,19 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ReparKitItem extends Item {
-    public int durability;
+    public float durability;
     public ResourceLocation resourcelocation;
     public int min;
     public int max;
     public SoundEvent sound;
-    public ReparKitItem(Properties properties, int durability, ResourceLocation image, int min, int max, SoundEvent sound) {
+    public ReparKitItem(Properties properties, float durability, ResourceLocation image, int min, int max, SoundEvent sound) {
         super(properties);
         this.durability = durability;
         this.resourcelocation = image;
@@ -66,9 +72,15 @@ public class ReparKitItem extends Item {
 
 
             } else {
-                    Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between 75% and 90% durability!"), true);
+                    Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between " + min + " and " + max + " durability!"), true);
                 }
         }
         return allow;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
+        super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
+        p_41423_.add(MutableComponent.create(Component.literal("Drag onto a damaged gun to use").getContents()).withStyle(ChatFormatting.GRAY));
     }
 }

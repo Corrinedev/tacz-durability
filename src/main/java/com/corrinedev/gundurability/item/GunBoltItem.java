@@ -18,6 +18,6 @@ public class GunBoltItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack itemstack, Level level, List<Component> list, TooltipFlag flag) {
 		super.appendHoverText(itemstack, level, list, flag);
-		list.add(Component.literal("Restores 17.5% Durability"));
+		list.add(Component.literal("Restores 20% Durability"));
 	}
 }

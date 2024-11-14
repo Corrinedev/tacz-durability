@@ -16,6 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +27,12 @@ public class TaczEvents {
     public static void tooltip(ItemTooltipEvent event) {
         if(event.getItemStack().getItem() instanceof ModernKineticGunItem) {
             event.getToolTip().add(MutableComponent.create(Component.literal("Durability: " + String.valueOf(event.getItemStack().getOrCreateTag().getInt("Durability"))).getContents()).withStyle(ChatFormatting.GRAY));
+        }
+    }
+    @SubscribeEvent
+    public static void durabilityConfirm(TickEvent.PlayerTickEvent event) {
+        if(!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
+            event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.MAXDURABILITY.get());
         }
     }
 
@@ -70,19 +77,30 @@ public class TaczEvents {
                      }
                  }
 
-                 if (!event.getShooter().getMainHandItem().getOrCreateTag().getBoolean("Jammed")) {
-
-                     if (Mth.nextInt(RandomSource.create(), -1, event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") / Config.JAMCHANCE.get()) == 0) {
-
-                         event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("Jammed", true);
-                         // event.getShooter().getMainHandItem().getOrCreateTag().putInt("SavedAmmo", event.getShooter().getMainHandItem().getOrCreateTag().getInt("GunCurrentAmmoCount"));
-                         // event.getShooter().getMainHandItem().getOrCreateTag().putInt("GunCurrentAmmoCount", 0);
-                         // event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("BulletInBarrel", false);
-                         event.getShooter().playSound(GundurabilityModSounds.JAMSFX.get());
-                         assert Minecraft.getInstance().player != null;
-                         Minecraft.getInstance().player.displayClientMessage(MutableComponent.create(Component.literal("Jammed!").getContents()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED), true);
+                 if (!event.getShooter().getMainHandItem().getOrCreateTag().getBoolean("Jammed") && event.getGunItemStack().getOrCreateTag().getInt("Durability") != 0) {
+                     boolean allowjam = true;
+                     for (int i = 0; i < Config.GUN_LIST.get().size(); i++) {
+                            System.out.println(Config.GUN_LIST.get().get(i).toString());
+                         if(event.getGunItemStack().getOrCreateTag().getString("GunId").equals(Config.GUN_LIST.get().get(i).toString())) {
+                             allowjam = false;
+                             System.out.println("ALLOWED");
+                             System.out.println(allowjam);
+                         }
 
                      }
+                    if(Config.JAMCHANCE.get() != 0 && allowjam) {
+                        if (Mth.nextInt(RandomSource.create(), -1, Math.round((float) event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") / Config.JAMCHANCE.get())) == 0) {
+
+                            event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("Jammed", true);
+                            // event.getShooter().getMainHandItem().getOrCreateTag().putInt("SavedAmmo", event.getShooter().getMainHandItem().getOrCreateTag().getInt("GunCurrentAmmoCount"));
+                            // event.getShooter().getMainHandItem().getOrCreateTag().putInt("GunCurrentAmmoCount", 0);
+                            // event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("BulletInBarrel", false);
+                            event.getShooter().playSound(GundurabilityModSounds.JAMSFX.get());
+                            assert Minecraft.getInstance().player != null;
+                            Minecraft.getInstance().player.displayClientMessage(MutableComponent.create(Component.literal("Jammed!").getContents()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED), true);
+
+                        }
+                    }
                  } else {
                      if (event.getShooter().level().getGameRules().getBoolean(GundurabilityModGameRules.GUNBREAK) || Config.GUNSBREAK.get()) {
                          if (event.getGunItemStack().getOrCreateTag().getInt("Durability") <= 0) {
