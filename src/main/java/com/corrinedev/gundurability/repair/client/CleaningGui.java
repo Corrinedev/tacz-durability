@@ -21,10 +21,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 public class CleaningGui extends Screen {
-    private final Minecraft minecraft;
     public int cleaningragX = 50;
     public int cleaningragXHitbox = 0;
     public int cleaningragXHitbox2 = 0;
@@ -43,11 +44,9 @@ public class CleaningGui extends Screen {
     public CleaningGui(ItemStack stack, ItemStack repairStack, int repairStackSlot, ResourceLocation image) {
         super(Component.literal("Weapon Repair"));
         this.RAG = image;
-        this.minecraft = Minecraft.getInstance();
         this.gunStack = stack;
         this.repairStackSlot = repairStackSlot;
         this.repairStack = repairStack;
-        super.minecraft = Minecraft.getInstance();
 
     }
 

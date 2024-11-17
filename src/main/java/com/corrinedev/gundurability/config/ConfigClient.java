@@ -7,7 +7,7 @@ public class ConfigClient {
 	public static final ForgeConfigSpec SPEC;
 	public static final ForgeConfigSpec.ConfigValue<Boolean> SHOWGUI;
 	static {
-		BUILDER.push("maxdurability");
+		BUILDER.push("showgui");
 		SHOWGUI = BUILDER.comment("Show the overlay clientside?").define("showgui", true);
 		BUILDER.pop();
 

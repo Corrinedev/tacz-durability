@@ -15,10 +15,14 @@ public class Config {
 	public static final ForgeConfigSpec.ConfigValue<Integer> COLDBIOMEMODIFIER;
 	public static final ForgeConfigSpec.ConfigValue<Boolean> GUNSBREAK;
 	public static final ForgeConfigSpec.ConfigValue<Integer> JAMCHANCE;
+	public static final ForgeConfigSpec.ConfigValue<Integer> INACCURACYRATE;
 	public static final ForgeConfigSpec.ConfigValue<List> GUN_LIST;
 	static {
 		BUILDER.push("maxdurability");
 		MAXDURABILITY = BUILDER.comment("The durability the gun starts with and the max it can repair to").define("maxdurability", 2000);
+		BUILDER.pop();
+		BUILDER.push("inaccuracy_rate");
+		INACCURACYRATE = BUILDER.comment("The rate of accuracy lost on lower durability, lower value = lower accuracy").define("inaccuracy_rate", 500);
 		BUILDER.pop();
 		BUILDER.push("gunsbreak");
 		GUNSBREAK = BUILDER.comment("Do guns break or not").define("gunsbreak", false);

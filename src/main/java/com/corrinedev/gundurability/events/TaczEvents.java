@@ -23,16 +23,13 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class TaczEvents {
-    @SubscribeEvent
-    public static void tooltip(ItemTooltipEvent event) {
-        if(event.getItemStack().getItem() instanceof ModernKineticGunItem) {
-            event.getToolTip().add(MutableComponent.create(Component.literal("Durability: " + String.valueOf(event.getItemStack().getOrCreateTag().getInt("Durability"))).getContents()).withStyle(ChatFormatting.GRAY));
-        }
-    }
+
     @SubscribeEvent
     public static void durabilityConfirm(TickEvent.PlayerTickEvent event) {
-        if(!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
-            event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.MAXDURABILITY.get());
+        if(event.player.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
+            if (!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
+                event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.MAXDURABILITY.get());
+            }
         }
     }
 
@@ -80,11 +77,8 @@ public class TaczEvents {
                  if (!event.getShooter().getMainHandItem().getOrCreateTag().getBoolean("Jammed") && event.getGunItemStack().getOrCreateTag().getInt("Durability") != 0) {
                      boolean allowjam = true;
                      for (int i = 0; i < Config.GUN_LIST.get().size(); i++) {
-                            System.out.println(Config.GUN_LIST.get().get(i).toString());
                          if(event.getGunItemStack().getOrCreateTag().getString("GunId").equals(Config.GUN_LIST.get().get(i).toString())) {
                              allowjam = false;
-                             System.out.println("ALLOWED");
-                             System.out.println(allowjam);
                          }
 
                      }

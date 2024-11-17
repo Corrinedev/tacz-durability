@@ -1,5 +1,5 @@
 
-package com.corrinedev.gundurability.client.overlays;
+package com.corrinedev.gundurability.client.screens;
 
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.ConfigClient;

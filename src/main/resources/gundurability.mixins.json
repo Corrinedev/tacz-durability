@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "gundurability.refmap.json",
   "mixins": [
+    "AccuracyMixin"
   ],
   "client": [
   ],

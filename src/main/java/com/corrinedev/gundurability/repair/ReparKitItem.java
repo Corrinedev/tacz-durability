@@ -18,9 +18,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
 
 public class ReparKitItem extends Item {
     public float durability;
@@ -67,12 +70,12 @@ public class ReparKitItem extends Item {
                             break;
                         }
                     }
-                    Minecraft.getInstance().setScreen(new CleaningGui(pSlot.getItem(), newstack, slot, resourcelocation));
+                    pPlayer.getPersistentData().putBoolean("gui", true);
                 pStack.setCount(0);
 
 
             } else {
-                    Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between " + min + " and " + max + " durability!"), true);
+                   // Minecraft.getInstance().player.displayClientMessage(Component.literal("This repair tool can only be used between " + min + " and " + max + " durability!"), true);
                 }
         }
         return allow;

@@ -23,6 +23,6 @@ public class WD40Item extends ReparKitItem {
 	@Override
 	public void appendHoverText(ItemStack itemstack, Level level, List<Component> list, TooltipFlag flag) {
 		super.appendHoverText(itemstack, level, list, flag);
-		list.add(Component.literal("Restores between 60% and 80% Durability"));
+		//list.add(Component.literal("Restores between 60% and 80% Durability"));
 	}
 }
