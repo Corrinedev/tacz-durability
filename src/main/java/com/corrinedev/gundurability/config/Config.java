@@ -17,6 +17,7 @@ public class Config {
 	public static final ForgeConfigSpec.ConfigValue<Integer> JAMCHANCE;
 	public static final ForgeConfigSpec.ConfigValue<Integer> INACCURACYRATE;
 	public static final ForgeConfigSpec.ConfigValue<List> GUN_LIST;
+	public static final ForgeConfigSpec.BooleanValue DEBUG;
 	static {
 		BUILDER.push("maxdurability");
 		MAXDURABILITY = BUILDER.comment("The durability the gun starts with and the max it can repair to").define("maxdurability", 2000);
@@ -47,6 +48,9 @@ public class Config {
 		BUILDER.pop();
 		BUILDER.push("unjammable_list");
 		GUN_LIST = BUILDER.comment("List of guns that can't jam").define("unjammable_list", List.of("tacz:db_short", "tacz:db_long"));
+		BUILDER.pop();
+		BUILDER.push("debug");
+		DEBUG = BUILDER.comment("consoledebug").define("consoledebug", false);
 		BUILDER.pop();
 
 		SPEC = BUILDER.build();

@@ -7,13 +7,13 @@ import com.corrinedev.gundurability.init.GundurabilityModSounds;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.event.TickEvent;
@@ -90,8 +90,8 @@ public class TaczEvents {
                             // event.getShooter().getMainHandItem().getOrCreateTag().putInt("GunCurrentAmmoCount", 0);
                             // event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("BulletInBarrel", false);
                             event.getShooter().playSound(GundurabilityModSounds.JAMSFX.get());
-                            assert Minecraft.getInstance().player != null;
-                            Minecraft.getInstance().player.displayClientMessage(MutableComponent.create(Component.literal("Jammed!").getContents()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED), true);
+                            Player player = (Player)event.getShooter();
+                            player.displayClientMessage(MutableComponent.create(Component.literal("Jammed!").getContents()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED), true);
 
                         }
                     }
@@ -100,8 +100,8 @@ public class TaczEvents {
                          if (event.getGunItemStack().getOrCreateTag().getInt("Durability") <= 0) {
                              event.getShooter().getMainHandItem().setCount(0);
                              event.getShooter().playSound(SoundEvents.ITEM_BREAK);
-                             assert Minecraft.getInstance().player != null;
-                             Minecraft.getInstance().player.displayClientMessage(MutableComponent.create(Component.literal("Your Gun Broke").getContents()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED), true);
+                             Player player = (Player)event.getShooter();
+                             player.displayClientMessage(MutableComponent.create(Component.literal("Your Gun Broke").getContents()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED), true);
                          }
                      }
                      event.setCanceled(true);
