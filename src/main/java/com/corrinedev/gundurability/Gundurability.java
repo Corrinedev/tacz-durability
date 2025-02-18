@@ -1,9 +1,9 @@
 package com.corrinedev.gundurability;
 
 import com.corrinedev.gundurability.config.Config;
-import com.corrinedev.gundurability.config.ConfigClient;
 import com.corrinedev.gundurability.events.TaczEvents;
 import com.corrinedev.gundurability.init.*;
+import com.corrinedev.gundurability.util.Utils;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -14,12 +14,10 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 import net.minecraftforge.network.NetworkEvent;
@@ -109,6 +107,9 @@ public class Gundurability {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
+    }
+    @SubscribeEvent
+    public static void onConfigLoaded(ModConfigEvent.Loading event) {
     }
 
 

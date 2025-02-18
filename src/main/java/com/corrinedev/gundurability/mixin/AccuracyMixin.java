@@ -1,6 +1,7 @@
 package com.corrinedev.gundurability.mixin;
 
 import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.util.Utils;
 import com.tacz.guns.api.entity.IGunOperator;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
@@ -36,7 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@Mixin(value = ModernKineticGunScriptAPI.class, remap = false,priority = 1100)
+@Mixin(value = ModernKineticGunScriptAPI.class, remap = false, priority = 1100)
 public abstract class AccuracyMixin {
 
     @Shadow public abstract boolean reduceAmmoOnce();
@@ -104,7 +105,7 @@ public abstract class AccuracyMixin {
                         ResourceLocation ammoId = gunData.getAmmoId();
 
                         for(int i = 0; i < bulletAmount; ++i) {
-                            float inaccuracyF = finalInaccuracy * (((float) Math.abs(shooter.getMainHandItem().getOrCreateTag().getInt("Durability") - Config.MAXDURABILITY.get()) / Config.INACCURACYRATE.get()) + 1);
+                            float inaccuracyF = finalInaccuracy * (((float) Math.abs(shooter.getMainHandItem().getOrCreateTag().getInt("Durability") - Config.getDurability(shooter.getMainHandItem().getOrCreateTag().getString("GunId"))) / Config.INACCURACYRATE.get()) + 1);
 
                             if(Config.DEBUG.get()) {
                                 System.out.println(inaccuracyF);

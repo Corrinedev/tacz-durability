@@ -16,7 +16,5 @@ public class GundurabilityModTabs {
 				GundurabilityModItems.REGISTRY.getEntries().forEach((item) -> {
 					tabData.accept(item.get());
 				});
-			})
-
-					.build());
+			}).build());
 }

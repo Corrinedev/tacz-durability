@@ -24,19 +24,17 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
-
 @Mod.EventBusSubscriber
 public class TaczEvents {
 
-    @SubscribeEvent
-    public static void durabilityConfirm(TickEvent.PlayerTickEvent event) {
-        if(event.player.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
-            if (!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
-                event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.getDurability(event.player.getMainHandItem().getOrCreateTag().getString("GunId")));
-            }
-        }
-    }
+   //@SubscribeEvent
+   //public static void durabilityConfirm(TickEvent.PlayerTickEvent event) {
+   //    if(event.player.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
+   //        if (!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
+   //            event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.getDurability(event.player.getMainHandItem().getOrCreateTag().getString("GunId")));
+   //        }
+   //    }
+   //}
 
     @SubscribeEvent
     public static void onShootEvent(GunFireEvent event) {

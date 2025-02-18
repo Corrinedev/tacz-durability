@@ -3,6 +3,7 @@ package com.corrinedev.gundurability.client.screens;
 
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.ConfigClient;
+import com.corrinedev.gundurability.util.Utils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tacz.guns.item.ModernKineticGunItem;
@@ -34,7 +35,7 @@ public class IconOverlayOverlay {
                 RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
 
-                double percent = (double) entity.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+                double percent = (double) entity.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.getDurability(Minecraft.getInstance().player.getMainHandItem().getOrCreateTag().getString("GunId"));
                 percent = percent * 100;
                 if (!entity.getMainHandItem().getOrCreateTag().getBoolean("Jammed")) {
 //Yellow

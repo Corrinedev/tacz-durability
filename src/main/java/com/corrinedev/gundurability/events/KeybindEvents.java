@@ -16,12 +16,11 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class KeybindEvents {
-    @SubscribeEvent
-    public static void tooltip(ItemTooltipEvent event) {
-        if(event.getItemStack().getItem() instanceof ModernKineticGunItem) {
-            event.getToolTip().add(MutableComponent.create(Component.literal("Durability: " + String.valueOf(event.getItemStack().getOrCreateTag().getInt("Durability"))).getContents()).withStyle(ChatFormatting.GRAY));
-        }
-    }
+   //@SubscribeEvent
+   //public static void tooltip(ItemTooltipEvent event) {
+   //    if(event.getItemStack().getItem() instanceof ModernKineticGunItem) {
+   //    }
+   //}
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.Key event) {

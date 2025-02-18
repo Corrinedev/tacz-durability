@@ -5,9 +5,12 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "gundurability.refmap.json",
   "mixins": [
-    "AccuracyMixin"
+    "AccuracyMixin",
+    "DefaultGunInstanceMixin",
+    "TooltipMixin"
   ],
   "client": [
+    "GunRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

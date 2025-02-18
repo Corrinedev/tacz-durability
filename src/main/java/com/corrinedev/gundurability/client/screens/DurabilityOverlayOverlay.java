@@ -3,6 +3,7 @@ package com.corrinedev.gundurability.client.screens;
 
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.ConfigClient;
+import com.corrinedev.gundurability.util.Utils;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +35,7 @@ public class DurabilityOverlayOverlay {
 		if (entity.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
 			int color;
 
-			double percent = (double) entity.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.MAXDURABILITY.get();
+			double percent = (double) entity.getMainHandItem().getOrCreateTag().getInt("Durability") / Config.getDurability(Minecraft.getInstance().player.getMainHandItem().getOrCreateTag().getString("GunId"));
 			percent = percent * 100;
 			//Yellow
 			if(percent > 50 && percent <= 75) {
