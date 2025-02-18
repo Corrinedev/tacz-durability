@@ -7,6 +7,7 @@ package com.corrinedev.gundurability.init;
 import com.corrinedev.gundurability.Gundurability;
 import com.corrinedev.gundurability.item.*;
 import com.corrinedev.gundurability.repair.ReparKitItem;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -21,7 +22,6 @@ public class GundurabilityModItems {
 	public static final RegistryObject<Item> GUN_BOLT = REGISTRY.register("gun_bolt", GunBoltItem::new);
 	public static final RegistryObject<Item> RECOIL_SPRING = REGISTRY.register("recoil_spring", RecoilSpringItem::new);
 	public static final RegistryObject<Item> BRASS_BRUSH = REGISTRY.register("brass_brush", BrassBrushItem::new);
-	//public static final RegistryObject<Item> BRASS_BRUSH_NEW = REGISTRY.register("brass_brush_new", ReparKitItem::new);
 	public static final RegistryObject<Item> REPAIR_TABLE = block(GundurabilityModBlocks.REPAIR_TABLE);
 
 	// Start of user code block custom items

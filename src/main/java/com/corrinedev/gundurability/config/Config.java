@@ -1,59 +1,45 @@
 package com.corrinedev.gundurability.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import com.corrinedev.jsconf.api.ConfigValue;
+import com.google.common.reflect.TypeToken;
 
+import java.net.Proxy;
 import java.util.List;
 
 public class Config {
-	public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-	public static final ForgeConfigSpec SPEC;
-	public static final ForgeConfigSpec.ConfigValue<Integer> MAXDURABILITY;
-	public static final ForgeConfigSpec.ConfigValue<Integer> SWAMPBIOMEMODIFIER;
-	public static final ForgeConfigSpec.ConfigValue<Integer> JUNGLEBIOMEMODIFIER;
-	public static final ForgeConfigSpec.ConfigValue<Integer> DESERTBIOMEMODIFIER;
-	public static final ForgeConfigSpec.ConfigValue<Integer> WATERMODIFIER;
-	public static final ForgeConfigSpec.ConfigValue<Integer> COLDBIOMEMODIFIER;
-	public static final ForgeConfigSpec.ConfigValue<Boolean> GUNSBREAK;
-	public static final ForgeConfigSpec.ConfigValue<Integer> JAMCHANCE;
-	public static final ForgeConfigSpec.ConfigValue<Integer> INACCURACYRATE;
-	public static final ForgeConfigSpec.ConfigValue<List> GUN_LIST;
-	public static final ForgeConfigSpec.BooleanValue DEBUG;
+	public static final com.corrinedev.jsconf.api.Config SPEC = new com.corrinedev.jsconf.api.Config("gundurability-common");
+	public static final ConfigValue<Integer> MAXDURABILITY;
+	public static final ConfigValue<List<BiomeModifier>> BIOMEMODIFIERS;
+	public static final ConfigValue<Boolean> GUNSBREAK;
+	public static final ConfigValue<Integer> JAMCHANCE;
+	public static final ConfigValue<Integer> INACCURACYRATE;
+	public static final ConfigValue<List<String>> GUN_LIST;
+	public static final ConfigValue<List<DurabilityModifier>> DURABILITY_LIST;
+	public static final ConfigValue<Boolean> DEBUG;
 	static {
-		BUILDER.push("maxdurability");
-		MAXDURABILITY = BUILDER.comment("The durability the gun starts with and the max it can repair to").define("maxdurability", 2000);
-		BUILDER.pop();
-		BUILDER.push("inaccuracy_rate");
-		INACCURACYRATE = BUILDER.comment("The rate of accuracy lost on lower durability, lower value = lower accuracy").define("inaccuracy_rate", 500);
-		BUILDER.pop();
-		BUILDER.push("gunsbreak");
-		GUNSBREAK = BUILDER.comment("Do guns break or not").define("gunsbreak", false);
-		BUILDER.pop();
-		BUILDER.push("jamchance");
-		JAMCHANCE = BUILDER.comment("Set to 0 to stop jamming entirely, do NOT set below 0 (LOWER number = LOWER jam chance)").define("jamchance", 15);
-		BUILDER.pop();
-		BUILDER.push("swampmodifier");
-		SWAMPBIOMEMODIFIER = BUILDER.comment("Jam chance increase, random value from 1 to the config value (increased number = lower multiplier)").define("swampmodifier", 2);
-		BUILDER.pop();
-		BUILDER.push("junglemodifier");
-		JUNGLEBIOMEMODIFIER = BUILDER.comment("Jam chance increase, random value from 1 to the config value (increased number = lower multiplier)").define("junglemodifier", 3);
-		BUILDER.pop();
-		BUILDER.push("watermodifier");
-		WATERMODIFIER = BUILDER.comment("Jam chance increase, random value from 1 to the config value (increased number = lower multiplier)").define("watermodifier", 1);
-		BUILDER.pop();
-		BUILDER.push("desertmodifier");
-		DESERTBIOMEMODIFIER = BUILDER.comment("Jam chance increase, random value from 1 to the config value (increased number = lower multiplier)").define("desertmodifier", 4);
-		BUILDER.pop();
-		BUILDER.push("coldmodifier");
-		COLDBIOMEMODIFIER = BUILDER.comment("Jam chance increase, random value from 1 to the config value (increased number = lower multiplier)").define("coldmodifier", 4);
-		BUILDER.pop();
-		BUILDER.push("unjammable_list");
-		GUN_LIST = BUILDER.comment("List of guns that can't jam").define("unjammable_list", List.of("tacz:db_short", "tacz:db_long"));
-		BUILDER.pop();
-		BUILDER.push("debug");
-		DEBUG = BUILDER.comment("consoledebug").define("consoledebug", false);
-		BUILDER.pop();
+		MAXDURABILITY = new ConfigValue<>(2000, "maxDurability", SPEC, new TypeToken<Integer>(){}.getType());
 
-		SPEC = BUILDER.build();
+		INACCURACYRATE = new ConfigValue<>(500, "inaccuracyRate", SPEC, new TypeToken<Integer>(){}.getType());
+
+		GUNSBREAK = new ConfigValue<>(false, "doGunsBreak", SPEC, new TypeToken<Boolean>(){}.getType());
+
+		JAMCHANCE = new ConfigValue<>(15, "jamChance", SPEC, new TypeToken<Integer>(){}.getType());
+
+		BIOMEMODIFIERS = new ConfigValue<>(List.of(new BiomeModifier("minecraft:desert", 1.5f), new BiomeModifier("minecraft:river", 2f), new BiomeModifier("minecraft:plains", 0.8f)), "biomeModifiers", SPEC, new TypeToken<List<BiomeModifier>>(){}.getType());
+
+		GUN_LIST = new ConfigValue<>(List.of("tacz:db_short", "tacz:db_long"), "unjammableList", SPEC, new TypeToken<List<String>>(){}.getType());
+
+		DURABILITY_LIST = new ConfigValue<>(List.of(new DurabilityModifier("tacz:db_short", 1500, 2), new DurabilityModifier("tacz:db_long", 1800, 1)), "durabilityList", SPEC, new TypeToken<List<DurabilityModifier>>(){}.getType());
+
+		DEBUG = new ConfigValue<>(false, "debug", SPEC, new TypeToken<Boolean>(){}.getType());
 	}
+	public static int getDurability(String gunId) {
+		for (DurabilityModifier modifier : DURABILITY_LIST.get()) {
+			if (modifier.gunId().equals(gunId)) {
+				return modifier.maxDurability();
+			}
+		}
 
+		return MAXDURABILITY.get();
+	}
 }

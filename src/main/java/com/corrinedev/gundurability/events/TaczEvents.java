@@ -1,7 +1,9 @@
 package com.corrinedev.gundurability.events;
 
 
+import com.corrinedev.gundurability.config.BiomeModifier;
 import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.config.DurabilityModifier;
 import com.corrinedev.gundurability.init.GundurabilityModGameRules;
 import com.corrinedev.gundurability.init.GundurabilityModSounds;
 import com.tacz.guns.api.event.common.GunFireEvent;
@@ -9,6 +11,7 @@ import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
@@ -21,6 +24,8 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
+
 @Mod.EventBusSubscriber
 public class TaczEvents {
 
@@ -28,7 +33,7 @@ public class TaczEvents {
     public static void durabilityConfirm(TickEvent.PlayerTickEvent event) {
         if(event.player.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
             if (!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
-                event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.MAXDURABILITY.get());
+                event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.getDurability(event.player.getMainHandItem().getOrCreateTag().getString("GunId")));
             }
         }
     }
@@ -40,38 +45,37 @@ public class TaczEvents {
              if (event.getShooter().getMainHandItem().getOrCreateTag().contains("Durability")) {
                  if (!event.getGunItemStack().getOrCreateTag().getBoolean("Jammed") && event.getGunItemStack().getOrCreateTag().getInt("Durability") > 0) {
                      //Biome modifier code start
-                     int biomeModifier = 0;
-                     if (event.getShooter().isUnderWater()) {
-                         biomeModifier = Config.WATERMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()).containsTag(BiomeTags.IS_JUNGLE)) {
-                         biomeModifier = Config.JUNGLEBIOMEMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()).containsTag(BiomeTags.IS_BADLANDS)) {
-                         biomeModifier = Config.DESERTBIOMEMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()).containsTag(BiomeTags.IS_TAIGA)) {
-                         biomeModifier = Config.COLDBIOMEMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()) == Biomes.DESERT) {
-                         biomeModifier = Config.DESERTBIOMEMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()) == Biomes.SWAMP) {
-                         biomeModifier = Config.SWAMPBIOMEMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()) == Biomes.MANGROVE_SWAMP) {
-                         biomeModifier = Config.SWAMPBIOMEMODIFIER.get();
-                     } else if (event.getShooter().level().getBiome(event.getShooter().blockPosition()) == Biomes.SNOWY_PLAINS) {
-                         biomeModifier = Config.COLDBIOMEMODIFIER.get();
-                     }
+                     float biomeModifier = 1;
+                     float gunModifier = 1;
+                     double randomNumber = Math.random();
 
-                     if (Mth.nextInt(RandomSource.create(), 1, biomeModifier) == 1 && !(biomeModifier == 0)) {
-                         if (event.getShooter().getMainHandItem().getOrCreateTag().getString("GunFireMode").equals("BURST")) {
-                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - 6);
-                         } else {
-                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - 2);
-                         }
-                     } else {
-                         if (event.getShooter().getMainHandItem().getOrCreateTag().getString("GunFireMode").equals("BURST")) {
-                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - 3);
-                         } else {
-                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - 1);
+                     for( DurabilityModifier modifier : Config.DURABILITY_LIST.get()) {
+                         if(event.getGunItemStack().getOrCreateTag().getString("GunId").equals(modifier.gunId())) {
+                             if (randomNumber < 0.5) {
+                                 // Round down
+                                 gunModifier = (int) Math.floor(modifier.jamMultiplier());
+                             } else {
+                                 // Round up
+                                 gunModifier = (int) Math.ceil(modifier.jamMultiplier());
+                             }
                          }
                      }
+                     for (BiomeModifier modifier : Config.BIOMEMODIFIERS.get()) {
+                         if(event.getShooter().level().getBiome(event.getShooter().blockPosition()).is(new ResourceLocation(modifier.biomeName()))) {
+                             if (randomNumber < 0.5) {
+                                 // Round down
+                                 biomeModifier = (int) Math.floor(modifier.multiplier());
+                             } else {
+                                 // Round up
+                                 biomeModifier = (int) Math.ceil(modifier.multiplier());
+                             }
+                         }
+                     }
+                         if (event.getShooter().getMainHandItem().getOrCreateTag().getString("GunFireMode").equals("BURST")) {
+                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - Math.round(3 * (gunModifier * biomeModifier)));
+                         } else {
+                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - Math.round(1 * (gunModifier * biomeModifier)));
+                         }
                  }
 
                  if (!event.getShooter().getMainHandItem().getOrCreateTag().getBoolean("Jammed") && event.getGunItemStack().getOrCreateTag().getInt("Durability") != 0) {
@@ -108,7 +112,7 @@ public class TaczEvents {
                  }
              } else {
                  // event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("HasDurability", true);
-                 event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", Config.MAXDURABILITY.get());
+                 event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", Config.getDurability(event.getShooter().getMainHandItem().getOrCreateTag().getString("GunId")));
              }
          }
          if(event.getLogicalSide().isClient()) {

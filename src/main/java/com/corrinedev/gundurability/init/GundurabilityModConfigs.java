@@ -14,7 +14,7 @@ public class GundurabilityModConfigs {
 	@SubscribeEvent
 	public static void register(FMLConstructModEvent event) {
 		event.enqueueWork(() -> {
-			ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC, "tacz-durability[COMMON].toml");
+
 			ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigClient.SPEC, "tacz-durability[CLIENT].toml");
 		});
 	}

@@ -1,6 +1,8 @@
 package com.corrinedev.gundurability.repair;
 
+import com.corrinedev.gundurability.Gundurability;
 import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.network.S2CCleaningScreenPacket;
 import com.corrinedev.gundurability.repair.client.CleaningGui;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.ChatFormatting;
@@ -8,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,6 +23,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -27,11 +31,11 @@ import java.util.List;
 
 public class ReparKitItem extends Item {
     public float durability;
-    public ResourceLocation resourcelocation;
+    public int resourcelocation;
     public int min;
     public int max;
     public SoundEvent sound;
-    public ReparKitItem(Properties properties, float durability, ResourceLocation image, int min, int max, SoundEvent sound) {
+    public ReparKitItem(Properties properties, float durability, int image, int min, int max, SoundEvent sound) {
         super(properties);
         this.durability = durability;
         this.resourcelocation = image;
@@ -42,7 +46,7 @@ public class ReparKitItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player player, InteractionHand p_41434_) {
-      //  Minecraft.getInstance().setScreen(new CleaningGui());
+
         return super.use(p_41432_, player, p_41434_);
     }
 
@@ -63,6 +67,9 @@ public class ReparKitItem extends Item {
 
                     //currentitem = pPlayer.getInventory().getItem(pPlayer.getInventory().findSlotMatchingItem(newstack));
                 pPlayer.addItem(newstack);
+                    if(!pPlayer.level().isClientSide()) {
+                        Gundurability.sendToPlayer(new S2CCleaningScreenPacket(pSlot.index, 1, pStack), (ServerPlayer) pPlayer);
+                    }
                 int slot = 1;
                     for (int i = 0; i < 36; i++) {
                         if(pPlayer.getSlot(i).get().getItem() == this) {

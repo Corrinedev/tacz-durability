@@ -33,7 +33,6 @@ public class CleaningGui extends Screen {
     public int cleaningragYHitbox = 0;
     public int cleaningragYHitbox2 = 0;
     public ItemStack gunStack;
-    public ItemStack repairStack;
     public int repairStackSlot;
     public boolean cleaning = false;
 
@@ -41,12 +40,15 @@ public class CleaningGui extends Screen {
     //public ImageWidget ragWidget = new ImageWidget(cleaningragX, cleaningragY, 32, 32, RAG);
 
 
-    public CleaningGui(ItemStack stack, ItemStack repairStack, int repairStackSlot, ResourceLocation image) {
+    public CleaningGui(ItemStack stack, int repairStackSlot, int repairSwitch) {
         super(Component.literal("Weapon Repair"));
-        this.RAG = image;
+        switch (repairSwitch) {
+            case 1: this.RAG = new ResourceLocation("gundurability", "textures/item/brushmc.png");
+            case 2: this.RAG = new ResourceLocation("gundurability", "textures/item/wd40.png");
+            default: this.RAG = new ResourceLocation("gundurability", "textures/item/brushmc.png");
+        }
         this.gunStack = stack;
         this.repairStackSlot = repairStackSlot;
-        this.repairStack = repairStack;
 
     }
 

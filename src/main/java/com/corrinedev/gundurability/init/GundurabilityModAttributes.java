@@ -36,7 +36,7 @@ public class GundurabilityModAttributes {
 	}
 
 	@Mod.EventBusSubscriber
-	private class Utils {
+	private static class Utils {
 		@SubscribeEvent
 		public static void persistAttributes(PlayerEvent.Clone event) {
 			Player oldP = event.getOriginal();
