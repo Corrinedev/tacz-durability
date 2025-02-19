@@ -1,17 +1,16 @@
 package com.corrinedev.gundurability.config;
 
+import com.corrinedev.jsconf.api.Config;
+import com.corrinedev.jsconf.api.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigClient {
-	public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-	public static final ForgeConfigSpec SPEC;
-	public static final ForgeConfigSpec.ConfigValue<Boolean> SHOWGUI;
+	public static final Config BUILDER = new Config("gundurability-client");
+	public static final ConfigValue<Boolean> SHOWGUI;
+	public static final ConfigValue<Boolean> SHOWRED;
 	static {
-		BUILDER.push("showgui");
-		SHOWGUI = BUILDER.comment("Show the overlay clientside?").define("showgui", true);
-		BUILDER.pop();
-
-		SPEC = BUILDER.build();
+		SHOWGUI = new ConfigValue<>(true, "showGui", BUILDER, boolean.class);
+		SHOWRED = new ConfigValue<>(true, "redLowDurability", BUILDER, boolean.class);
 	}
 
 }

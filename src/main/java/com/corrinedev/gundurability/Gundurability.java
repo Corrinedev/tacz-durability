@@ -1,6 +1,7 @@
 package com.corrinedev.gundurability;
 
 import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.config.ConfigClient;
 import com.corrinedev.gundurability.events.TaczEvents;
 import com.corrinedev.gundurability.init.*;
 import com.corrinedev.gundurability.util.Utils;
@@ -119,7 +120,7 @@ public class Gundurability {
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            ConfigClient.BUILDER.register();
         }
     }
 }
