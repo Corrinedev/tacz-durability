@@ -52,6 +52,7 @@ public class Gundurability {
 
         // Register the commonSetup method for modloading
         bus.addListener(this::commonSetup);
+        bus.addListener(GundurabilityModItems::register);
 
         GundurabilityModSounds.REGISTRY.register(bus);
         GundurabilityModBlocks.REGISTRY.register(bus);
@@ -100,8 +101,7 @@ public class Gundurability {
         }
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
-    }
+    private void commonSetup(final FMLCommonSetupEvent event) {}
 
     // Add the example block item to the building blocks tab
 

@@ -23,7 +23,7 @@ public class GunRendererMixin {
         RenderSystem.enableBlend();
         int durability = gunItem.getOrCreateTag().getInt("Durability");
         float lost = Mth.clamp((float) durability / (Config.getDurability(gunItem.getOrCreateTag().getString("GunId"))) + 0.5f, 0f, 1f);
-        i
+
         RenderSystem.setShaderColor(1f, lost, lost,1f);
     }
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/model/BedrockAnimatedModel;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemDisplayContext;Lnet/minecraft/client/renderer/RenderType;II)V", shift = At.Shift.AFTER))

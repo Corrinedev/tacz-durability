@@ -1,8 +1,10 @@
 
 package com.corrinedev.gundurability.world.inventory;
 
+import com.corrinedev.gundurability.config.DurabilityItemHolder;
 import com.corrinedev.gundurability.init.GundurabilityModItems;
 import com.corrinedev.gundurability.init.GundurabilityModMenus;
+import com.corrinedev.gundurability.item.RepairItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +33,7 @@ public class RepairGUIMenu extends AbstractContainerMenu implements Supplier<Map
 	public int x, y, z;
 	private ContainerLevelAccess access = ContainerLevelAccess.NULL;
 	private IItemHandler internal;
-	private final Map<Integer, Slot> customSlots = new HashMap<>();
+	public final Map<Integer, Slot> customSlots = new HashMap<>();
 	private boolean bound = false;
 	private Supplier<Boolean> boundItemMatcher = null;
 	private Entity boundEntity = null;
@@ -81,7 +83,7 @@ public class RepairGUIMenu extends AbstractContainerMenu implements Supplier<Map
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return GundurabilityModItems.WD_40.get() == stack.getItem();
+				return stack.getItem() instanceof RepairItem item && item.getSlot() == DurabilityItemHolder.Slots.MISC;
 			}
 		}));
 		this.customSlots.put(2, this.addSlot(new SlotItemHandler(internal, 2, 116, 37) {
@@ -89,7 +91,7 @@ public class RepairGUIMenu extends AbstractContainerMenu implements Supplier<Map
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return GundurabilityModItems.GUN_BARREL.get() == stack.getItem();
+				return stack.getItem() instanceof RepairItem item && item.getSlot() == DurabilityItemHolder.Slots.BARREL;
 			}
 		}));
 		this.customSlots.put(0, this.addSlot(new SlotItemHandler(internal, 0, 80, 64) {
@@ -100,7 +102,7 @@ public class RepairGUIMenu extends AbstractContainerMenu implements Supplier<Map
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return GundurabilityModItems.GUN_BOLT.get() == stack.getItem();
+				return stack.getItem() instanceof RepairItem item && item.getSlot() == DurabilityItemHolder.Slots.BOLT;
 			}
 		}));
 		this.customSlots.put(4, this.addSlot(new SlotItemHandler(internal, 4, 44, 37) {
@@ -108,7 +110,7 @@ public class RepairGUIMenu extends AbstractContainerMenu implements Supplier<Map
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return GundurabilityModItems.RECOIL_SPRING.get() == stack.getItem();
+				return stack.getItem() instanceof RepairItem item && item.getSlot() == DurabilityItemHolder.Slots.SPRING;
 			}
 		}));
 		this.customSlots.put(5, this.addSlot(new SlotItemHandler(internal, 5, 152, 64) {
@@ -116,7 +118,7 @@ public class RepairGUIMenu extends AbstractContainerMenu implements Supplier<Map
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return GundurabilityModItems.BRASS_BRUSH.get() == stack.getItem();
+				return stack.getItem() instanceof RepairItem item && item.getSlot() == DurabilityItemHolder.Slots.MISC;
 			}
 		}));
 		for (int si = 0; si < 3; ++si)

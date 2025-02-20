@@ -1,6 +1,7 @@
 
 package com.corrinedev.gundurability.item;
 
+import com.corrinedev.gundurability.config.DurabilityItemHolder;
 import com.corrinedev.gundurability.repair.ReparKitItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,16 +14,8 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class WD40Item extends ReparKitItem {
+public class WD40Item extends RepairItem {
 	public WD40Item() {
-		super(new Properties().durability(20).rarity(Rarity.COMMON), 0.4f, 2, 60, 80, SoundEvents.GENERIC_SPLASH);
-	}
-
-
-
-	@Override
-	public void appendHoverText(ItemStack itemstack, Level level, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, level, list, flag);
-		//list.add(Component.literal("Restores between 60% and 80% Durability"));
+		super(12, 5.5f, 70f, 40f, DurabilityItemHolder.Slots.MISC);
 	}
 }

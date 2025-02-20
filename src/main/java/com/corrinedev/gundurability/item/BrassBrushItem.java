@@ -1,6 +1,7 @@
 
 package com.corrinedev.gundurability.item;
 
+import com.corrinedev.gundurability.config.DurabilityItemHolder;
 import com.corrinedev.gundurability.repair.ReparKitItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,9 +14,9 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class BrassBrushItem extends ReparKitItem {
+public class BrassBrushItem extends RepairItem {
 	public BrassBrushItem() {
-		super(new Properties().durability(50).rarity(Rarity.COMMON), 0.2f, 1, 75, 90, SoundEvents.WOOL_STEP);
+		super(16, 2.5f, 90f, 70f, DurabilityItemHolder.Slots.MISC);
 	}
 
 
