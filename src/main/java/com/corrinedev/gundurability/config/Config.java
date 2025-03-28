@@ -17,6 +17,7 @@ public class Config {
 	public static final ConfigValue<List<DurabilityModifier>> DURABILITY_LIST;
 	public static final ConfigValue<Boolean> DEBUG;
 	public static final ConfigValue<List<DurabilityItemHolder>> ITEMS;
+	public static final ConfigValue<String> TABLOCATION;
 	static {
 		MAXDURABILITY = new ConfigValue<>(2000, "maxDurability", SPEC, new TypeToken<Integer>(){}.getType());
 
@@ -34,7 +35,9 @@ public class Config {
 
 		DEBUG = new ConfigValue<>(false, "debug", SPEC, new TypeToken<Boolean>(){}.getType());
 
-		ITEMS = new ConfigValue<>(List.of(new DurabilityItemHolder("testdurability:testitem", 50, 4, DurabilityItemHolder.Slots.MISC, 500, 1200, null)), "durabilityList", SPEC, new TypeToken<List<DurabilityItemHolder>>(){}.getType());
+		ITEMS = new ConfigValue<>(List.of(DurabilityItemHolder.AK_BARREL, DurabilityItemHolder.GUN_BARREL, DurabilityItemHolder.GUN_BOLT, DurabilityItemHolder.RECOIL_SPRING, DurabilityItemHolder.BRASS_BRUSH, DurabilityItemHolder.WD40), "durabilityItems", SPEC, new TypeToken<List<DurabilityItemHolder>>(){}.getType());
+
+		TABLOCATION = new ConfigValue<>("gundurability:brass_brush", "creativeTab", SPEC, new TypeToken<String>(){}.getType());
 	}
 	public static int getDurability(String gunId) {
 		for (DurabilityModifier modifier : DURABILITY_LIST.get()) {

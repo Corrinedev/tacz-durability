@@ -14,6 +14,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -78,8 +79,6 @@ public class RepairGUIButtonMessage {
 
 	public static void execute(Player entity) {
 		if(entity instanceof ServerPlayer && entity.containerMenu instanceof RepairGUIMenu containerMenu) {
-			System.out.println(entity);
-
 			int durability = Config.MAXDURABILITY.get();
 
 			if (containerMenu.getSlot(0).getItem().getItem() instanceof ModernKineticGunItem) {
@@ -90,82 +89,22 @@ public class RepairGUIButtonMessage {
 
 			Slot gunSlot = containerMenu.customSlots.get(0);
 			int repairAmount = 0;
-			System.out.println(gunSlot.getItem());
-			System.out.println(containerMenu.customSlots);
 			if (!gunSlot.getItem().getOrCreateTag().contains("Durability")) {
-				System.out.println("FAIL");
 				return;
 			}
 			for (Slot slot : containerMenu.customSlots.values()) {
 				if (slot.getItem().getItem() instanceof RepairItem repairItem) {
-					System.out.println(repairItem.isBetween(gunSlot.getItem()));
 					if (repairItem.isBetween(gunSlot.getItem())) {
-						repairAmount += repairItem.getRepairAmount(gunSlot.getItem());
+						if(repairItem.getGunIds() == null || repairItem.getGunIds().contains(gunSlot.getItem().getOrCreateTag().getString("GunId"))) {
+							repairAmount += repairItem.getRepairAmount(gunSlot.getItem());
+							slot.getItem().setDamageValue(slot.getItem().getDamageValue() + 1);
+							if(slot.getItem().getDamageValue() >= slot.getItem().getMaxDamage()) slot.getItem().setCount(0);
+						}
 					}
 				}
 			}
-			System.out.println(repairAmount);
 			repairAmount = Mth.clamp(repairAmount + gunSlot.getItem().getOrCreateTag().getInt("Durability"), 0, Config.getDurability(gunSlot.getItem().getOrCreateTag().getString("GunId")));
 			gunSlot.getItem().getOrCreateTag().putInt("Durability", repairAmount);
 		}
-		//if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability") < durability) {
-		//	if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(2)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.GUN_BARREL
-		//			.get()) {
-		//		if (entity instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
-		//			((Slot) _slots.get(2)).remove(1);
-		//			_player.containerMenu.broadcastChanges();
-		//		}
-		//		(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
-        //                (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
-        //                                                + percent * 17.5f));
-		//	}
-		//	if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(3)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.GUN_BOLT.get()) {
-		//		if (entity instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
-		//			((Slot) _slots.get(3)).remove(1);
-		//			_player.containerMenu.broadcastChanges();
-		//		}
-		//		(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
-        //                (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
-        //                                                + percent * 20f));
-		//	}
-		//	if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(4)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.RECOIL_SPRING
-		//			.get()) {
-		//		if (entity instanceof Player _player && _player.containerMenu instanceof Supplier _current && _current.get() instanceof Map _slots) {
-		//			((Slot) _slots.get(4)).remove(1);
-		//			_player.containerMenu.broadcastChanges();
-		//		}
-		//		(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
-        //                (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
-        //                                                + percent * 15f));
-		//	}
-		//	if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(1)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.WD_40.get()) {
-		//		{
-		//			ItemStack _ist = (entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(1)).getItem() : ItemStack.EMPTY);
-		//			if (_ist.hurt(1, RandomSource.create(), null)) {
-		//				_ist.shrink(1);
-		//				_ist.setDamageValue(0);
-		//			}
-		//		}
-		//		(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
-        //                (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
-        //                                                + percent * 0.4f));
-		//	}
-		//	if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(5)).getItem() : ItemStack.EMPTY).getItem() == GundurabilityModItems.BRASS_BRUSH
-		//			.get()) {
-		//		{
-		//			ItemStack _ist = (entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(5)).getItem() : ItemStack.EMPTY);
-		//			if (_ist.hurt(1, RandomSource.create(), null)) {
-		//				_ist.shrink(1);
-		//				_ist.setDamageValue(0);
-		//			}
-		//		}
-		//		(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability",
-        //                (int) ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability")
-        //                                                + 0.2f));
-		//	}
-		//	if ((entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().getInt("Durability") > durability) {
-		//		(entity instanceof Player _plrSlotItem && _plrSlotItem.containerMenu instanceof Supplier _splr && _splr.get() instanceof Map _slt ? ((Slot) _slt.get(0)).getItem() : ItemStack.EMPTY).getOrCreateTag().putInt("Durability", durability);
-		//	}
-		//}
 	}
 }

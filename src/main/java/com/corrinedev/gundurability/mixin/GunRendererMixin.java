@@ -1,16 +1,25 @@
 package com.corrinedev.gundurability.mixin;
 
 import com.corrinedev.gundurability.config.Config;
+import com.corrinedev.gundurability.config.ConfigClient;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tacz.guns.client.model.BedrockGunModel;
 import com.tacz.guns.client.renderer.item.GunItemRenderer;
+import com.tacz.guns.client.resource.index.ClientGunIndex;
+import com.tacz.guns.resource.pojo.GunIndexPOJO;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.ForgeHooksClient;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,15 +29,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GunRendererMixin {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/model/BedrockAnimatedModel;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemDisplayContext;Lnet/minecraft/client/renderer/RenderType;II)V", shift = At.Shift.BEFORE))
     public void renderByItemFirst(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, CallbackInfo ci) {
-        RenderSystem.enableBlend();
-        int durability = gunItem.getOrCreateTag().getInt("Durability");
-        float lost = Mth.clamp((float) durability / (Config.getDurability(gunItem.getOrCreateTag().getString("GunId"))) + 0.5f, 0f, 1f);
+        if(ConfigClient.SHOWRED.get()) {
+            RenderSystem.enableBlend();
+            int durability = gunItem.getOrCreateTag().getInt("Durability");
+            float lost = Mth.clamp((float) durability / (Config.getDurability(gunItem.getOrCreateTag().getString("GunId"))) + 0.5f, 0f, 1f);
 
-        RenderSystem.setShaderColor(1f, lost, lost,1f);
+            RenderSystem.setShaderColor(1f, lost, lost, 1f);
+        }
+
     }
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/client/model/BedrockAnimatedModel;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemDisplayContext;Lnet/minecraft/client/renderer/RenderType;II)V", shift = At.Shift.AFTER))
     public void renderByItemLast(PoseStack matrixStack, ItemStack gunItem, ItemDisplayContext transformType, RenderType renderType, int light, int overlay, CallbackInfo ci) {
-        RenderSystem.disableBlend();
-        RenderSystem.setShaderColor(1f,1f,1f,1f);
+        if(ConfigClient.SHOWRED.get()) {
+            RenderSystem.disableBlend();
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        }
     }
 }

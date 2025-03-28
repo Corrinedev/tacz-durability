@@ -26,22 +26,21 @@ import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.corrinedev.gundurability.Gundurability.MODID;
 
 @Mod.EventBusSubscriber
 public class GundurabilityModItems {
-	public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, Gundurability.MODID);
-	public static final RegistryObject<Item> WD_40 = REGISTRY.register("wd_40", WD40Item::new);
-	public static final RegistryObject<Item> GUN_BARREL = REGISTRY.register("gun_barrel", GunBarrelItem::new);
-	public static final RegistryObject<Item> GUN_BOLT = REGISTRY.register("gun_bolt", GunBoltItem::new);
-	public static final RegistryObject<Item> RECOIL_SPRING = REGISTRY.register("recoil_spring", RecoilSpringItem::new);
-	public static final RegistryObject<Item> BRASS_BRUSH = REGISTRY.register("brass_brush", BrassBrushItem::new);
+	public static final HashMap<ResourceLocation, Item> REGISTRY = new HashMap<>();
+	public static final DeferredRegister<Item> REPAIRTABLEREGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 	public static final RegistryObject<Item> REPAIR_TABLE = block(GundurabilityModBlocks.REPAIR_TABLE);
 
 	// Start of user code block custom items
 	// End of user code block custom items
 	private static RegistryObject<Item> block(RegistryObject<Block> block) {
-		return REGISTRY.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
+		return REPAIRTABLEREGISTER.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
 	}
 	@SubscribeEvent
 	public static void register(RegisterEvent event) {
@@ -51,9 +50,15 @@ public class GundurabilityModItems {
 					List<String> gunIds = new ArrayList<>();
 					for (JsonElement e : holder.gunTag().getAsJsonArray("gunIds")) gunIds.add(e.getAsString());
 					Pair<String, List<String>> pair = Pair.of(holder.gunTag().getAsJsonPrimitive("tagName").getAsString(), gunIds);
-					items.register(new ResourceLocation(holder.id()), new RepairItem(holder.uses(), holder.durability(), holder.maxDurability(), holder.minDurability(), holder.slot(), pair));
+					RepairItem item = new RepairItem(holder.uses(), holder.durability(), holder.maxDurability(), holder.minDurability(), holder.slot(), pair);
+					ResourceLocation resourceLocation = new ResourceLocation(holder.id());
+					REGISTRY.put(resourceLocation, item);
+					items.register(resourceLocation, item);
 				} else {
-					items.register(new ResourceLocation(holder.id()), new RepairItem(holder.uses(), holder.durability(), holder.maxDurability(), holder.minDurability(), holder.slot()));
+					RepairItem item = new RepairItem(holder.uses(), holder.durability(), holder.maxDurability(), holder.minDurability(), holder.slot());
+					ResourceLocation resourceLocation = new ResourceLocation(holder.id());
+					REGISTRY.put(resourceLocation, item);
+					items.register(resourceLocation, item);
 				}
 			}
 		});

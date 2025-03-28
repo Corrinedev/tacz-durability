@@ -6,12 +6,14 @@ import com.corrinedev.gundurability.events.TaczEvents;
 import com.corrinedev.gundurability.init.*;
 import com.corrinedev.gundurability.util.Utils;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -57,7 +59,7 @@ public class Gundurability {
         GundurabilityModSounds.REGISTRY.register(bus);
         GundurabilityModBlocks.REGISTRY.register(bus);
 
-        GundurabilityModItems.REGISTRY.register(bus);
+        GundurabilityModItems.REPAIRTABLEREGISTER.register(bus);
 
         GundurabilityModTabs.REGISTRY.register(bus);
 
@@ -67,6 +69,7 @@ public class Gundurability {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(TaczEvents.class);
+
 
     }
     private static final String PROTOCOL_VERSION = "1";
@@ -102,17 +105,6 @@ public class Gundurability {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
-
-    // Add the example block item to the building blocks tab
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-    }
-    @SubscribeEvent
-    public static void onConfigLoaded(ModConfigEvent.Loading event) {
-    }
-
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
