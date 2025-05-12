@@ -2,7 +2,10 @@ package com.corrinedev.gundurability.config;
 
 import com.corrinedev.jsconf.api.ConfigValue;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.Proxy;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class Config {
 
 		GUN_LIST = new ConfigValue<>(List.of("tacz:db_short", "tacz:db_long"), "unjammableList", SPEC, new TypeToken<List<String>>(){}.getType());
 
-		DURABILITY_LIST = new ConfigValue<>(List.of(new DurabilityModifier("tacz:db_short", 1500, 2), new DurabilityModifier("tacz:db_long", 1800, 1)), "durabilityList", SPEC, new TypeToken<List<DurabilityModifier>>(){}.getType());
+		DURABILITY_LIST = new ConfigValue<>(List.of(new DurabilityModifier("tacz:db_short", 1500, 2, 100), new DurabilityModifier("tacz:db_long", 1800, 1, 100)), "durabilityList", SPEC, new TypeToken<List<DurabilityModifier>>(){}.getType());
 
 		DEBUG = new ConfigValue<>(false, "debug", SPEC, new TypeToken<Boolean>(){}.getType());
 

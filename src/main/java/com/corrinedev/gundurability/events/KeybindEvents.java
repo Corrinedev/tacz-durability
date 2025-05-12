@@ -25,8 +25,7 @@ public class KeybindEvents {
     @SubscribeEvent
     public static void onKeyPress(InputEvent.Key event) {
         if(InspectKey.INSPECT_KEY.consumeClick()) {
-            Gundurability.PACKET_HANDLER.sendToServer(new InspectDurabilityMessage(0, 0));
-            InspectDurabilityMessage.pressAction(Minecraft.getInstance().player, 0, 0);
+            Gundurability.PACKET_HANDLER.sendToServer(new InspectDurabilityMessage());
         }
     }
 }
