@@ -10,7 +10,7 @@ public class ConfigClient {
 	public static final ConfigValue<Boolean> SHOWRED;
 	static {
 		SHOWGUI = new ConfigValue<>(true, "showGui", BUILDER, boolean.class);
-		SHOWRED = new ConfigValue<>(true, "redLowDurability", BUILDER, boolean.class);
+		SHOWRED = new ConfigValue<>(false, "redLowDurability", BUILDER, boolean.class);
 	}
 
 }
