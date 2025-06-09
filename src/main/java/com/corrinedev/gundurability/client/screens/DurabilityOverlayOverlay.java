@@ -3,7 +3,6 @@ package com.corrinedev.gundurability.client.screens;
 
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.ConfigClient;
-import com.corrinedev.gundurability.util.Utils;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;

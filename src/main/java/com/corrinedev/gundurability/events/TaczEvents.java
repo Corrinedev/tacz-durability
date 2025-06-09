@@ -1,11 +1,13 @@
 package com.corrinedev.gundurability.events;
 
 
+import com.corrinedev.gundurability.Gundurability;
 import com.corrinedev.gundurability.config.BiomeModifier;
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.DurabilityModifier;
 import com.corrinedev.gundurability.init.GundurabilityModGameRules;
 import com.corrinedev.gundurability.init.GundurabilityModSounds;
+import com.corrinedev.gundurability.util.Work;
 import com.tacz.guns.api.event.common.GunFireEvent;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.ChatFormatting;
@@ -13,35 +15,26 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class TaczEvents {
-
-   //@SubscribeEvent
-   //public static void durabilityConfirm(TickEvent.PlayerTickEvent event) {
-   //    if(event.player.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
-   //        if (!event.player.getMainHandItem().getOrCreateTag().contains("Durability")) {
-   //            event.player.getMainHandItem().getOrCreateTag().putInt("Durability", Config.getDurability(event.player.getMainHandItem().getOrCreateTag().getString("GunId")));
-   //        }
-   //    }
-   //}
+    public static final String JAM = "Jammed";
+    public static final String DURABILITY = "Durability";
+    public static final String OTHERHANDLE = "gundurability$handlingJamming";
 
     @SubscribeEvent
     public static void onShootEvent(GunFireEvent event) {
- 
+
          if(event.getLogicalSide().isServer()) {
-             if (event.getShooter().getMainHandItem().getOrCreateTag().contains("Durability")) {
-                 if (!event.getGunItemStack().getOrCreateTag().getBoolean("Jammed") && event.getGunItemStack().getOrCreateTag().getInt("Durability") > 0) {
+             if(!(event.getShooter() instanceof Player) && event.getGunItemStack().getOrCreateTag().getBoolean(JAM)) handleUnjammingForNonPlayers(event.getShooter());
+             if (event.getShooter().getMainHandItem().getOrCreateTag().contains(DURABILITY)) {
+                 if (!event.getGunItemStack().getOrCreateTag().getBoolean(JAM) && event.getGunItemStack().getOrCreateTag().getInt(DURABILITY) > 0) {
                      //Biome modifier code start
                      float biomeModifier = 1;
                      float gunModifier = 1;
@@ -70,13 +63,13 @@ public class TaczEvents {
                          }
                      }
                          if (event.getShooter().getMainHandItem().getOrCreateTag().getString("GunFireMode").equals("BURST")) {
-                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - Math.round(3 * (gunModifier * biomeModifier)));
+                             event.getShooter().getMainHandItem().getOrCreateTag().putInt(DURABILITY, event.getShooter().getMainHandItem().getOrCreateTag().getInt(DURABILITY) - Math.round(3 * (gunModifier * biomeModifier)));
                          } else {
-                             event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") - Math.round(1 * (gunModifier * biomeModifier)));
+                             event.getShooter().getMainHandItem().getOrCreateTag().putInt(DURABILITY, event.getShooter().getMainHandItem().getOrCreateTag().getInt(DURABILITY) - Math.round(1 * (gunModifier * biomeModifier)));
                          }
                  }
 
-                 if (!event.getShooter().getMainHandItem().getOrCreateTag().getBoolean("Jammed") && event.getGunItemStack().getOrCreateTag().getInt("Durability") != 0) {
+                 if (!event.getShooter().getMainHandItem().getOrCreateTag().getBoolean(JAM) && event.getGunItemStack().getOrCreateTag().getInt(DURABILITY) != 0) {
                      boolean allowjam = true;
                      for (int i = 0; i < Config.GUN_LIST.get().size(); i++) {
                          if(event.getGunItemStack().getOrCreateTag().getString("GunId").equals(Config.GUN_LIST.get().get(i).toString())) {
@@ -85,39 +78,60 @@ public class TaczEvents {
 
                      }
                     if(Config.JAMCHANCE.get() != 0 && allowjam) {
-                        if (Mth.nextInt(RandomSource.create(), -1, Math.round((float) event.getShooter().getMainHandItem().getOrCreateTag().getInt("Durability") / Config.JAMCHANCE.get())) == 0) {
+                        if (Mth.nextInt(RandomSource.create(), -1, Math.round((float) event.getShooter().getMainHandItem().getOrCreateTag().getInt(DURABILITY) / Config.JAMCHANCE.get())) == 0) {
 
-                            event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("Jammed", true);
-                            // event.getShooter().getMainHandItem().getOrCreateTag().putInt("SavedAmmo", event.getShooter().getMainHandItem().getOrCreateTag().getInt("GunCurrentAmmoCount"));
-                            // event.getShooter().getMainHandItem().getOrCreateTag().putInt("GunCurrentAmmoCount", 0);
-                            // event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("BulletInBarrel", false);
+                            event.getShooter().getMainHandItem().getOrCreateTag().putBoolean(JAM, true);
                             event.getShooter().playSound(GundurabilityModSounds.JAMSFX.get());
-                            Player player = (Player)event.getShooter();
-                            player.displayClientMessage(MutableComponent.create(Component.literal("Jammed!").getContents()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED), true);
-
+                            if(event.getShooter() instanceof Player player)
+                                player.displayClientMessage(MutableComponent.create(Component.literal("Jammed!").getContents()).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED), true);
                         }
                     }
                  } else {
                      if (event.getShooter().level().getGameRules().getBoolean(GundurabilityModGameRules.GUNBREAK) || Config.GUNSBREAK.get()) {
-                         if (event.getGunItemStack().getOrCreateTag().getInt("Durability") <= 0) {
+                         if (event.getGunItemStack().getOrCreateTag().getInt(DURABILITY) <= 0) {
                              event.getShooter().getMainHandItem().setCount(0);
                              event.getShooter().playSound(SoundEvents.ITEM_BREAK);
-                             Player player = (Player)event.getShooter();
-                             player.displayClientMessage(MutableComponent.create(Component.literal("Your Gun Broke").getContents()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED), true);
+
+                             if(event.getShooter() instanceof Player player)
+                                 player.displayClientMessage(MutableComponent.create(Component.literal("Your Gun Broke").getContents()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED), true);
                          }
                      }
                      event.setCanceled(true);
                  }
-             } else {
-                 // event.getShooter().getMainHandItem().getOrCreateTag().putBoolean("HasDurability", true);
-                 event.getShooter().getMainHandItem().getOrCreateTag().putInt("Durability", Config.getDurability(event.getShooter().getMainHandItem().getOrCreateTag().getString("GunId")));
-             }
+             } else
+                 event.getShooter().getMainHandItem().getOrCreateTag().putInt(DURABILITY, Config.getDurability(event.getShooter().getMainHandItem().getOrCreateTag().getString("GunId")));
          }
          if(event.getLogicalSide().isClient()) {
-             if(event.getGunItemStack().getOrCreateTag().getBoolean("Jammed") || event.getGunItemStack().getOrCreateTag().getInt("Durability") <=0) {
+             if(event.getGunItemStack().getOrCreateTag().getBoolean(JAM) || event.getGunItemStack().getOrCreateTag().getInt(DURABILITY) <=0) {
                  event.setCanceled(true);
-                 //event.getShooter().playSound(GundurabilityModSounds.JAMSFX.get());
              }
          }
+    }
+
+    public static void handleUnjammingForNonPlayers(LivingEntity livingEntity) {
+        if(livingEntity.getPersistentData().contains(OTHERHANDLE) && livingEntity.getPersistentData().getBoolean(OTHERHANDLE)) return;
+        int jamTime = 100;
+        livingEntity.getPersistentData().putBoolean(OTHERHANDLE, true);
+        if(livingEntity.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
+            for (DurabilityModifier modifier : Config.DURABILITY_LIST.get()) {
+                if (livingEntity.getMainHandItem().getOrCreateTag().getString("GunId").equals(modifier.gunId())) {
+                    jamTime = modifier.jamTime();
+                }
+            }
+        }
+        if (livingEntity.getMainHandItem().getOrCreateTag().getBoolean(JAM)) {
+            Gundurability.queueServerWork(new Work<>(livingEntity, jamTime) {
+                public boolean cancel = false;
+                public void tick() {
+                    if(!(entity.getMainHandItem().getItem() instanceof ModernKineticGunItem)) cancel = true;
+                }
+                public void run() {
+                    if (entity.getMainHandItem().getItem() instanceof ModernKineticGunItem && !this.cancel) {
+                        entity.getMainHandItem().getOrCreateTag().putBoolean(JAM, false);
+                        entity.getPersistentData().putBoolean(OTHERHANDLE, false);
+                    }
+                }
+            });
+        }
     }
 }

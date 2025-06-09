@@ -4,24 +4,18 @@ package com.corrinedev.gundurability.network;
 import com.corrinedev.gundurability.Gundurability;
 import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.DurabilityModifier;
-import com.corrinedev.gundurability.init.GundurabilityModAttributes;
+import com.corrinedev.gundurability.util.Work;
 import com.tacz.guns.item.ModernKineticGunItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -44,7 +38,7 @@ public class InspectDurabilityMessage {
 		context.setPacketHandled(true);
 	}
 
-	public static void pressAction(Player entity) {
+	public static void pressAction(ServerPlayer entity) {
 		int jamTime = 100;
 
 		if(entity.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
@@ -55,10 +49,16 @@ public class InspectDurabilityMessage {
 			}
 		}
 		if (entity.getMainHandItem().getOrCreateTag().getBoolean("Jammed")) {
-			Gundurability.queueServerWork(jamTime, () -> {
-				if (entity.getMainHandItem().getItem() instanceof ModernKineticGunItem) {
-					entity.getMainHandItem().getOrCreateTag().putBoolean("Jammed", false);
-					entity.displayClientMessage(MutableComponent.create(Component.literal("Jam Cleared!").getContents()).withStyle(ChatFormatting.YELLOW), true);
+			Gundurability.queueServerWork(new Work<>(entity, jamTime) {
+				public boolean cancel = false;
+				public void tick() {
+					if(!(entity.getMainHandItem().getItem() instanceof ModernKineticGunItem)) cancel = true;
+				}
+				public void run() {
+					if (entity.getMainHandItem().getItem() instanceof ModernKineticGunItem && !this.cancel) {
+						entity.getMainHandItem().getOrCreateTag().putBoolean("Jammed", false);
+						entity.displayClientMessage(MutableComponent.create(Component.literal("Jam Cleared!").getContents()).withStyle(ChatFormatting.YELLOW), true);
+					}
 				}
 			});
 		}

